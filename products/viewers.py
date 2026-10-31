@@ -69,13 +69,20 @@ def _tpw_viewer(out, browser):
             page.wait_for_timeout(120)
         clock = page.locator("#clock").bounding_box()
         stage = page.locator("#stage").bounding_box()
-        y0 = clock["y"] - 2
-        clip = {"x": stage["x"], "y": y0, "width": stage["width"], "height": stage["y"] + stage["height"] - y0}
+        y0 = clock["y"] - 4
+        x0 = min(clock["x"], stage["x"]) - 2
+        clip = {"x": x0, "y": y0, "width": stage["x"] + stage["width"] - x0,
+                "height": stage["y"] + stage["height"] - y0}
+        # blank the header band to the right of the clock (status text etc.)
+        band = (round(clock["x"] + clock["width"] - x0 + 10), 0, round(clip["width"]), round(stage["y"] - y0 - 1))
         frames = []
         for k in range(n):
             page.wait_for_timeout(450)
             png = page.screenshot(clip=clip)
-            frames.append(Image.open(io.BytesIO(png)).convert("RGB").resize((OUT_W, OUT_H), Image.LANCZOS))
+            fr = Image.open(io.BytesIO(png)).convert("RGB")
+            if band[2] > band[0] and band[3] > 0:
+                ImageDraw.Draw(fr).rectangle(band, fill=fr.getpixel((band[0], 2)))
+            frames.append(fr.resize((OUT_W, OUT_H), Image.LANCZOS))
             page.click("#next")
         _save_gif(frames, out / "tpw_loop.gif")
         return f"TPWViewer {n} frames; {info.group(0) if info else ''}"
@@ -152,10 +159,19 @@ def refs(out, browser):
     try:
         page.goto(f"{REFS}#viewport={REFS_VIEW}&fieldset=members:cref", wait_until="domcontentloaded",
                   timeout=120000)
-        page.wait_for_function("() => { const t = document.querySelector('.mpv-time');"
-                               " const c = document.querySelector('.cal-text');"
-                               " return t && c && /\\(F\\d+\\)/.test(t.textContent) && /\\d{2}Z/.test(c.value); }",
-                               timeout=120000)
+        msgs = []
+        page.on("console", lambda m: msgs.append(f"{m.type}: {m.text}"[:200]))
+        page.on("pageerror", lambda e: msgs.append(f"pageerror: {e}"[:200]))
+        try:
+            page.wait_for_function("() => { const t = document.querySelector('.mpv-time');"
+                                   " const c = document.querySelector('.cal-text');"
+                                   " return t && c && /\\(F\\d+\\)/.test(t.textContent) && /\\d{2}Z/.test(c.value); }",
+                                   timeout=120000)
+        except Exception:
+            page.screenshot(path=str(out / "debug_refs.png"))
+            webgl = page.evaluate("() => !!document.createElement('canvas').getContext('webgl2')")
+            raise RuntimeError(f"REFS viewer did not initialise (webgl2={webgl}); "
+                               f"text={page.inner_text('body')[:200]!r}; console={msgs[-6:]}")
         page.wait_for_timeout(4000)
         cyc_txt = page.eval_on_selector(".cal-text", "e => e.value")  # e.g. 2026-10-31 12Z
         cycle = dt.datetime.strptime(cyc_txt.strip(), "%Y-%m-%d %HZ").replace(tzinfo=dt.timezone.utc)
