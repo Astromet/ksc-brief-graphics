@@ -112,7 +112,9 @@ def sounding_climo(out, browser):
         vals = re.findall(r"-?\d+\.\d+|-", lines[-1])
         if len([v for v in vals if v != "-"]) < 5:
             raise RuntimeError(f"data readout not populated: {lines[-1]!r}")
-        png = page.locator("#line-chart svg").first.screenshot()
+        page.evaluate("() => { const s = document.querySelector('#line-chart svg'); s.style.background = '#fff'; "
+                      "s.style.backgroundColor = '#fff'; }")
+        png = page.locator("#line-chart svg").first.screenshot(omit_background=False)
         chart = _trim(Image.open(io.BytesIO(png)).convert("RGB"))
         chart.save(out / "snd_pw_climo.png", optimize=True)
         _table(date_label, vals).save(out / "snd_pw_table.png", optimize=True)
