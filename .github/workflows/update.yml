@@ -1,0 +1,55 @@
+name: Update briefing graphics
+
+on:
+  schedule:
+    - cron: "7,37 * * * *"   # every 30 minutes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: graphics
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core fonts-liberation >/dev/null
+          pip install -q -r requirements.txt
+          python -m playwright install --with-deps chromium >/dev/null
+
+      - name: Start from the last published images
+        run: |
+          mkdir -p site
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null; then
+            git clone -q --depth 1 -b gh-pages "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" prev
+            cp -r prev/. site/ && rm -rf site/.git prev
+          fi
+
+      - name: Build graphics
+        run: python build.py site
+
+      - name: Publish to GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "Update graphics"
+
+      # GitHub pauses scheduled jobs after 60 days without repo activity; this keeps it running.
+      - uses: liskin/gh-workflow-keepalive@v1
