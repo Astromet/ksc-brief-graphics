@@ -3,6 +3,9 @@
   * SPC REFS member composite reflectivity, valid 18Z (4 members side by side)
 """
 import datetime as dt
+
+BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
 import io
 import json
 import re
@@ -29,7 +32,8 @@ def _save_gif(frames, path, ms=170, last_ms=1500):
 
 
 def _tpw_viewer(out, browser):
-    ctx = browser.new_context(viewport={"width": 1300, "height": 900}, device_scale_factor=1)
+    ctx = browser.new_context(viewport={"width": 1300, "height": 900}, device_scale_factor=1,
+                              user_agent=BROWSER_UA)
     page = ctx.new_page()
 
     def patch_manifest(route):
@@ -154,7 +158,7 @@ def _refs_compose(panels, cycle, valid, out):
 
 
 def refs(out, browser):
-    ctx = browser.new_context(viewport={"width": VW, "height": VH}, device_scale_factor=2)
+    ctx = browser.new_context(viewport={"width": VW, "height": VH}, device_scale_factor=2, user_agent=BROWSER_UA)
     page = ctx.new_page()
     try:
         page.goto(f"{REFS}#viewport={REFS_VIEW}&fieldset=members:cref", wait_until="domcontentloaded",
