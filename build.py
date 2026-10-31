@@ -11,7 +11,7 @@ import sys
 import traceback
 from pathlib import Path
 
-from products import climatology, nws_lead, satellite
+from products import climatology, deck, nws_lead, satellite
 from products.common import now_utc
 
 PLAIN = {
@@ -66,6 +66,9 @@ def main():
             run("refs", viewers.refs, browser)
             browser.close()
 
+    # last: package the deck with every current image embedded
+    run("deck", deck.build)
+
     status_path.write_text(json.dumps(status, indent=2))
     rows = "".join(
         f"<tr><td>{k}</td><td>{'OK' if v.get('ok') else 'FAILED'}</td><td>{v.get('updated') or '-'}</td>"
@@ -76,6 +79,7 @@ def main():
         "<!doctype html><meta charset=utf-8><title>KSC briefing graphics</title>"
         "<style>body{font-family:sans-serif;margin:24px}td,th{border:1px solid #ccc;padding:4px 8px}"
         "table{border-collapse:collapse}</style><h1>KSC briefing graphics</h1>"
+        f"<p style='font-size:1.3em'><a href='KSC_Morning_Brief.pptx'><b>Download the current briefing deck (.pptx)</b></a></p>"
         f"<p>Last run {now_utc():%Y-%m-%d %H:%MZ}</p><table><tr><th>Product</th><th>Status</th>"
         f"<th>Last good update</th><th>Note</th></tr>{rows}</table><h2>Files</h2><ul>{files}</ul>")
     (out / ".nojekyll").write_text("")

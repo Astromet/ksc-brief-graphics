@@ -1,5 +1,9 @@
 # KSC Morning Weather Briefing graphics
 
+**Current deck (all images embedded, rebuilt every 30 min):** https://astromet.github.io/ksc-brief-graphics/KSC_Morning_Brief.pptx
+
+To change the slides themselves, replace `assets/deck_template.pptx` with the edited deck (keep the linked pictures).
+
 A scheduled GitHub Action (every 30 minutes) rebuilds the auto-updating images used by the
 KSC Morning Weather Briefing PowerPoint and publishes them with GitHub Pages at
 `https://astromet.github.io/ksc-brief-graphics/<file>`. The deck links to those addresses, so
