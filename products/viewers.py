@@ -190,8 +190,23 @@ def refs(out, browser):
             return [d ? g.getParameter(d.UNMASKED_RENDERER_WEBGL) : '?',
                     !!g.getExtension('EXT_color_buffer_float'), !!g.getExtension('OES_texture_float_linear')].join(' '); }""")
         msgs.append(f"GL: {gl}")
-        cyc_txt = page.eval_on_selector(".cal-text", "e => e.value")  # e.g. 2026-10-31 12Z
-        cycle = dt.datetime.strptime(cyc_txt.strip(), "%Y-%m-%d %HZ").replace(tzinfo=dt.timezone.utc)
+        def get_cycle():
+            txt = page.eval_on_selector(".cal-text", "e => e.value")  # e.g. 2026-10-31 12Z
+            return dt.datetime.strptime(txt.strip(), "%Y-%m-%d %HZ").replace(tzinfo=dt.timezone.utc)
+
+        cycle = get_cycle()
+        if cycle.hour == 18:
+            # the 18Z cycle has no F00, so 18Z valid comes from the 12Z cycle (F06)
+            day = f"{cycle:%Y-%m-%d}"
+            page.click(".cal-text")
+            page.wait_for_timeout(800)
+            page.click(f'td[data-date="{day}"]')
+            page.wait_for_timeout(800)
+            page.locator(f'td[data-date="{day}"] svg.clock text', has_text="12Z").first.click(force=True)
+            page.wait_for_timeout(12000)
+            cycle = get_cycle()
+            if cycle.hour != 12:
+                raise RuntimeError(f"could not switch to the 12Z cycle (at {cycle:%HZ})")
         valid = cycle.replace(hour=18)
         target_f = int((valid - cycle).total_seconds() // 3600)
 
