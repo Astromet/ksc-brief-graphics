@@ -184,7 +184,12 @@ def refs(out, browser):
             webgl = page.evaluate("() => !!document.createElement('canvas').getContext('webgl2')")
             raise RuntimeError(f"REFS viewer did not initialise (webgl2={webgl}); "
                                f"text={page.inner_text('body')[:200]!r}; console={msgs[-6:]}")
-        page.wait_for_timeout(4000)
+        page.wait_for_timeout(12000)
+        gl = page.evaluate("""() => { const g = document.createElement('canvas').getContext('webgl2');
+            if (!g) return 'no webgl2'; const d = g.getExtension('WEBGL_debug_renderer_info');
+            return [d ? g.getParameter(d.UNMASKED_RENDERER_WEBGL) : '?',
+                    !!g.getExtension('EXT_color_buffer_float'), !!g.getExtension('OES_texture_float_linear')].join(' '); }""")
+        msgs.append(f"GL: {gl}")
         cyc_txt = page.eval_on_selector(".cal-text", "e => e.value")  # e.g. 2026-10-31 12Z
         cycle = dt.datetime.strptime(cyc_txt.strip(), "%Y-%m-%d %HZ").replace(tzinfo=dt.timezone.utc)
         valid = cycle.replace(hour=18)
@@ -216,9 +221,10 @@ def refs(out, browser):
                 if member() == name:
                     break
                 key("ArrowDown")
+                page.wait_for_timeout(400)
             if member() != name:
                 raise RuntimeError(f"member {name!r} not found (at {member()!r})")
-            page.wait_for_timeout(7000)
+            page.wait_for_timeout(20000)
             try:
                 page.wait_for_load_state("networkidle", timeout=20000)
             except Exception:  # noqa: BLE001
@@ -229,6 +235,6 @@ def refs(out, browser):
             s = shot.width / VW
             panels.append(shot.crop(tuple(round(v * s) for v in CROP)))
         _refs_compose(panels, cycle, valid, out)
-        return f"cycle {cycle:%d/%HZ} F{target_f:02d}; data responses {codes}; {msgs[:4]}"
+        return f"cycle {cycle:%d/%HZ} F{target_f:02d}; data responses {codes}; {msgs[-8:]}"
     finally:
         ctx.close()
