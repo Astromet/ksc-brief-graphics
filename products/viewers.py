@@ -198,16 +198,17 @@ def refs(out, browser):
         def key(k, times=1):
             for _ in range(times):
                 page.evaluate("k => window.dispatchEvent(new KeyboardEvent('keydown', {key: k, bubbles: true}))", k)
-                page.wait_for_timeout(120)
+                page.wait_for_timeout(350)
 
         def fhour():
             return int(re.search(r"\(F(\d+)\)", page.inner_text(".mpv-time")).group(1))
 
-        for _ in range(80):
+        for _ in range(4):
             f = fhour()
             if f == target_f:
                 break
-            key("ArrowRight" if f < target_f else "ArrowLeft")
+            key("ArrowRight" if f < target_f else "ArrowLeft", abs(target_f - f))
+            page.wait_for_timeout(3000)
         if fhour() != target_f or "18Z" not in page.inner_text(".mpv-time"):
             raise RuntimeError(f"could not set forecast hour: {page.inner_text('.mpv-time')}")
 
