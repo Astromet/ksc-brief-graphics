@@ -79,10 +79,19 @@ def _table(date_label, vals):
 
 
 def sounding_climo(out, browser):
-    ctx = browser.new_context(viewport={"width": 1400, "height": 1000}, device_scale_factor=2.25)
+    ctx = browser.new_context(viewport={"width": 1400, "height": 1000}, device_scale_factor=2.25,
+                              user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                                          "(KHTML, like Gecko) Chrome/130.0 Safari/537.36"))
     page = ctx.new_page()
     try:
-        page.goto(SPC, wait_until="networkidle", timeout=120000)
+        resp = page.goto(SPC, wait_until="domcontentloaded", timeout=120000)
+        try:
+            page.wait_for_selector("#stn", state="attached", timeout=60000)
+        except Exception:
+            page.screenshot(path=str(out / "debug_sounding.png"))
+            raise RuntimeError(f"SPC page not usable (HTTP {resp.status if resp else '?'}): "
+                               f"{page.title()!r} {page.inner_text('body')[:300]!r}")
+        page.wait_for_timeout(3000)
         page.select_option("#stn", "XMR")
         page.wait_for_function("document.getElementById('svg-title') && "
                                "document.getElementById('svg-title').innerText.includes('XMR')", timeout=120000)
