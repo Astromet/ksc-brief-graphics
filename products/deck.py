@@ -18,6 +18,8 @@ BASE = "https://astromet.github.io/ksc-brief-graphics/"
 OUT_NAME = "KSC_Morning_Brief.pptx"
 REL_RE = re.compile(r"<Relationship\b[^>]*?/>")
 BLIP_RE = re.compile(r'<a:blip r:embed="([^"]+)" r:link="([^"]+)"')
+LINK_ONLY_RE = re.compile(r'<a:blip r:link="([^"]+)"')
+IMG_REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"
 MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December"
 FMT = {".png": "PNG", ".gif": "GIF", ".jpg": "JPEG", ".jpeg": "JPEG"}
 
@@ -92,6 +94,29 @@ def build(out):
             rels = rels.replace(etag, new_tag)
             tags[embed_id] = new_tag
             ok += 1
+        # pictures that are link-only (no saved image): add an embedded copy
+        added = {}
+        for link_id in sorted(set(LINK_ONLY_RE.findall(xml))):
+            ltag = tags.get(link_id)
+            if not ltag or _attr(ltag, "TargetMode") != "External":
+                continue
+            data = fetch(_attr(ltag, "Target").replace("&amp;", "&"))
+            if data is None:
+                continue
+            ext = {"PNG": ".png", "GIF": ".gif", "JPEG": ".jpg"}.get(Image.open(io.BytesIO(data)).format)
+            if not ext:
+                continue
+            new_id = f"rIdLive{link_id}"
+            target = f"../media/live_s{slide_no}_{new_id}{ext}"
+            files[posixpath.normpath(posixpath.join("ppt/slides", target))] = data
+            rels = rels.replace("</Relationships>", f'<Relationship Id="{new_id}" Type="{IMG_REL}" '
+                                                    f'Target="{target}"/></Relationships>')
+            added[link_id] = new_id
+            ok += 1
+        if added:
+            xml = LINK_ONLY_RE.sub(lambda m: f'<a:blip r:embed="{added[m.group(1)]}" r:link="{m.group(1)}"'
+                                   if m.group(1) in added else m.group(0), xml)
+            files[name] = xml.encode("utf-8")
         files[rels_name] = rels.encode("utf-8")
 
     # title slide date
@@ -110,6 +135,12 @@ def build(out):
                     used.add(posixpath.normpath(posixpath.join(base, _attr(t, "Target"))))
     for n in [n for n in files if n.startswith("ppt/media/") and n not in used]:
         del files[n]
+
+    ct = files["[Content_Types].xml"].decode("utf-8")
+    for ext, mime in (("png", "image/png"), ("gif", "image/gif"), ("jpg", "image/jpeg")):
+        if f'Extension="{ext}"' not in ct:
+            ct = ct.replace("<Default ", f'<Default Extension="{ext}" ContentType="{mime}"/><Default ', 1)
+    files["[Content_Types].xml"] = ct.encode("utf-8")
 
     order = ["[Content_Types].xml"] + [n for n in files if n != "[Content_Types].xml"]
     tmp = out / (OUT_NAME + ".tmp")
