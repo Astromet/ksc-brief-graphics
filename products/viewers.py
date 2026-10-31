@@ -251,6 +251,7 @@ def refs(out, browser):
             s = shot.width / VW
             panels.append(shot.crop(tuple(round(v * s) for v in CROP)))
         _refs_compose(panels, cycle, valid, out)
-        return f"cycle {cycle:%d/%HZ} F{target_f:02d}; data responses {codes}; {msgs[-8:]}"
+        errs = [m for m in msgs if not m.startswith("warning")]
+        return f"cycle {cycle:%d/%HZ} F{target_f:02d}; data responses {codes}" + (f"; {errs[-3:]}" if errs else "")
     finally:
         ctx.close()
