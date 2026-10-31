@@ -7,6 +7,8 @@ opening it pulls the latest images.
 
 | File | Slide | What it is |
 |---|---|---|
+| `tpw_loop.gif` | Precipitable Water | TPWViewer 24-h loop (inches, KSC marker); falls back to CIMSS MIMIC-TPW2 if the viewer fails or its data is >6 h old |
+| `refs_18z.png` | Modeled Future Radar | SPC REFS composite reflectivity valid 18Z: HRRR, HRRR −12h, RRFS Ctl, RRFS Ctl −12h |
 | `goes19_se_2h.gif` | Satellite & Radar | GOES-19 SE GeoColor, last 2 hours |
 | `nws_mlb_lead.png` | Tidbits | Lead graphicast on weather.gov/mlb |
 | `snd_pw_climo.png`, `snd_pw_table.png` | 10Z KXMR Balloon Sounding | SPC sounding climatology (XMR, PW) + today's 12Z data readout |
