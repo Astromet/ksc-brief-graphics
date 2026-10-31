@@ -90,6 +90,8 @@ def tc_origin(out):
     for url in cands:
         try:
             im = get_image(url).convert("RGB")
+            if im.width > 1600:
+                im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
             im.save(out / "tc_origin_current.png", optimize=True)
             return url
         except Exception as e:  # noqa: BLE001
