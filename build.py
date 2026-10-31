@@ -21,7 +21,7 @@ PLAIN = {
     "tc_activity": climatology.tc_activity,
     "tc_origin": climatology.tc_origin,
 }
-BROWSER = ["meteograms", "sounding_climo"]
+BROWSER = ["meteograms", "sounding_climo", "tpw", "refs"]
 
 
 def main():
@@ -57,9 +57,13 @@ def main():
 
         from products import browser_products as bp
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            from products import viewers
+            browser = p.chromium.launch(args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader",
+                                              "--ignore-gpu-blocklist", "--enable-webgl"])
             run("meteograms", bp.meteograms, browser)
             run("sounding_climo", bp.sounding_climo, browser)
+            run("tpw", viewers.tpw, browser)
+            run("refs", viewers.refs, browser)
             browser.close()
 
     status_path.write_text(json.dumps(status, indent=2))

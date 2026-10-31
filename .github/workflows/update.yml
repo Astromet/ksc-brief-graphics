@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "7,37 * * * *"   # every 30 minutes
   workflow_dispatch:
+    inputs:
+      products:
+        description: "Only build these products (space-separated); blank = all"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -40,7 +45,7 @@ jobs:
           fi
 
       - name: Build graphics
-        run: python build.py site
+        run: python build.py site ${{ github.event.inputs.products }}
 
       - name: Publish to GitHub Pages branch
         uses: peaceiris/actions-gh-pages@v4
