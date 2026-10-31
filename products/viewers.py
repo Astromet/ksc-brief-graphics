@@ -164,6 +164,14 @@ def refs(out, browser):
         page.goto(f"{REFS}#viewport={REFS_VIEW}&fieldset=members:cref", wait_until="domcontentloaded",
                   timeout=120000)
         msgs = []
+        codes = {}
+
+        def on_resp(r):
+            if "/data/" in r.url or ".zarr" in r.url:
+                codes[r.status] = codes.get(r.status, 0) + 1
+                if r.status >= 400 and len(msgs) < 40:
+                    msgs.append(f"{r.status} {r.url[-90:]}")
+        ctx.on("response", on_resp)
         page.on("console", lambda m: msgs.append(f"{m.type}: {m.text}"[:200]))
         page.on("pageerror", lambda e: msgs.append(f"pageerror: {e}"[:200]))
         try:
@@ -221,6 +229,6 @@ def refs(out, browser):
             s = shot.width / VW
             panels.append(shot.crop(tuple(round(v * s) for v in CROP)))
         _refs_compose(panels, cycle, valid, out)
-        return f"cycle {cycle:%d/%HZ} F{target_f:02d}"
+        return f"cycle {cycle:%d/%HZ} F{target_f:02d}; data responses {codes}; {msgs[:4]}"
     finally:
         ctx.close()
