@@ -12,7 +12,12 @@ import zipfile
 
 from PIL import Image
 
-from .common import ASSETS, get, now_local
+import datetime as dt
+from email.utils import parsedate_to_datetime
+
+import requests
+
+from .common import ASSETS, UA, get, now_local
 
 BASE = "https://astromet.github.io/ksc-brief-graphics/"
 OUT_NAME = "KSC_Morning_Brief.pptx"
@@ -27,6 +32,64 @@ FMT = {".png": "PNG", ".gif": "GIF", ".jpg": "JPEG", ".jpeg": "JPEG"}
 def _attr(tag, name):
     m = re.search(rf'\b{name}="([^"]*)"', tag)
     return m.group(1) if m else None
+
+
+# ---------------------------------------------------------------- GFS map slides
+GFS_RE = re.compile(r"https://mag\.ncep\.noaa\.gov/data/gfs/(\d{2})/west-atl/10m_wnd_precip/"
+                    r"gfs_west-atl_(\d{3})_10m_wnd_precip\.gif")
+GFS_URL = ("https://mag.ncep.noaa.gov/data/gfs/{cc:02d}/west-atl/10m_wnd_precip/"
+           "gfs_west-atl_{fff:03d}_10m_wnd_precip.gif")
+WEEKDAYS = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday"
+
+
+def _gfs_run(day):
+    """Newest GFS run on MAG that can show 18Z on `day` (UTC date): (init datetime, cycle hour)."""
+    v18 = dt.datetime(day.year, day.month, day.day, 18, tzinfo=dt.timezone.utc)
+    for back in range(0, 30, 6):
+        init = (v18 - dt.timedelta(hours=6 + back)).replace(minute=0)
+        init = init.replace(hour=init.hour - init.hour % 6)
+        url = GFS_URL.format(cc=init.hour, fff=int((v18 - init).total_seconds() // 3600))
+        try:
+            r = requests.head(url, headers=UA, timeout=30, allow_redirects=True)
+            mod = parsedate_to_datetime(r.headers["Last-Modified"])
+        except Exception:  # noqa: BLE001
+            continue
+        if r.status_code == 200 and init + dt.timedelta(hours=2) <= mod <= init + dt.timedelta(hours=20):
+            return init
+    return None
+
+
+def _gfs_slides(files, order):
+    """Point each GFS map at the newest run's image valid 18Z on its day, and retitle the slides."""
+    gfs = []
+    for name in order:
+        rels_name = posixpath.join("ppt/slides/_rels", posixpath.basename(name) + ".rels")
+        rels = files.get(rels_name, b"").decode("utf-8")
+        if GFS_RE.search(rels):
+            gfs.append((name, rels_name))
+    if not gfs:
+        return "no GFS slides"
+    today = now_local().date()
+    init = _gfs_run(today)
+    for i, (name, rels_name) in enumerate(gfs):
+        day = today + dt.timedelta(days=i)
+        label = "This Afternoon" if i == 0 else "Tomorrow Afternoon" if i == 1 else f"{day:%A} Afternoon"
+        xml = files[name].decode("utf-8")
+        xml = re.sub(rf"(GFS Model\s*:\s*)(?:This|Tomorrow|{WEEKDAYS}) Afternoon", rf"\g<1>{label}", xml, count=1)
+        files[name] = xml.encode("utf-8")
+        if init:
+            v18 = dt.datetime(day.year, day.month, day.day, 18, tzinfo=dt.timezone.utc)
+            fff = int((v18 - init).total_seconds() // 3600)
+            rels = files[rels_name].decode("utf-8")
+            files[rels_name] = GFS_RE.sub(GFS_URL.format(cc=init.hour, fff=fff), rels).encode("utf-8")
+    return f"GFS {init:%d/%HZ} run" if init else "GFS run not verified; kept links"
+
+
+def _slide_order(files):
+    pres = files["ppt/presentation.xml"].decode("utf-8")
+    rels = files["ppt/_rels/presentation.xml.rels"].decode("utf-8")
+    tgt = {_attr(t, "Id"): _attr(t, "Target") for t in REL_RE.findall(rels)}
+    return ["ppt/" + tgt[r] for r in re.findall(r'<p:sldId [^>]*r:id="([^"]+)"', pres)]
 
 
 def _convert(data, ext):
@@ -50,6 +113,7 @@ def build(out):
     src = zipfile.ZipFile(ASSETS / "deck_template.pptx")
     files = {n: src.read(n) for n in src.namelist()}
     cache, ok, failed = {}, 0, []
+    gfs_note = _gfs_slides(files, _slide_order(files))
 
     def fetch(url):
         if url not in cache:
@@ -149,7 +213,7 @@ def build(out):
             z.writestr(n, files[n], compress_type=zipfile.ZIP_STORED if n.endswith((".gif", ".png", ".jpg", ".jpeg"))
                        else zipfile.ZIP_DEFLATED)
     tmp.replace(out / OUT_NAME)
-    note = f"{ok} pictures refreshed"
+    note = f"{ok} pictures refreshed; {gfs_note}"
     if failed:
         note += f"; kept previous image for: {', '.join(failed[:8])}"
     return note
