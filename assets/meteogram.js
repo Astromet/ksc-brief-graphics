@@ -10,10 +10,11 @@ async function buildMeteogram(opts) {
   const hourly = V.flatMap(v => L.map(l => `${v}_${l}hPa`)).join(',');
   const url = `https://api.open-meteo.com/v1/${M.api}?latitude=${o.lat}&longitude=${o.lon}&hourly=${hourly}&models=${M.mdl}&forecast_days=${o.days + 1}&wind_speed_unit=kn&timezone=GMT`;
   let d = null, lastErr = '';
-  for (let k = 0; k < 5 && !d; k++) {
-    if (k) await new Promise(r => setTimeout(r, 15000 * k));
+  for (let k = 0; k < 4 && !d; k++) {
+    if (k) await new Promise(r => setTimeout(r, 10000 * k));
     try {
-      const r = await fetch(url, {cache: 'no-store'}); const t = await r.text();
+      const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 60000);
+      const r = await fetch(url, {cache: 'no-store', signal: ac.signal}); const t = await r.text(); clearTimeout(tm);
       try { const j = JSON.parse(t); if (j.error) lastErr = `HTTP ${r.status}: ${j.reason}`; else d = j; }
       catch (e) { lastErr = `HTTP ${r.status}: ${t.slice(0, 160)}`; }
     } catch (e) { lastErr = String(e); }
@@ -21,7 +22,7 @@ async function buildMeteogram(opts) {
   if (!d) throw new Error(`Open-Meteo ${M.api} failed after retries - ${lastErr}`);
   if (d.error) throw new Error(d.reason || 'Open-Meteo error');
   let run = null;
-  try { const m = await fetch(`https://api.open-meteo.com/data/${M.meta}/static/meta.json`).then(r => r.json()); run = new Date(m.last_run_initialisation_time * 1000); } catch (e) {}
+  try { const ac2 = new AbortController(); setTimeout(() => ac2.abort(), 30000); const m = await fetch(`https://api.open-meteo.com/data/${M.meta}/static/meta.json`, {signal: ac2.signal}).then(r => r.json()); run = new Date(m.last_run_initialisation_time * 1000); } catch (e) {}
   // 3-hourly from run time (or start of day) for `days` days
   const times = d.hourly.time.map(t => new Date(t + ':00Z'));
   const t0 = run ? run.getTime() : times[0].getTime();

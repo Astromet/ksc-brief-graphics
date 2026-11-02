@@ -15,6 +15,7 @@ def meteograms(out, browser):
     notes = []
     for model, fname in (("gfs", "meteogram_gfs.png"), ("ecmwf", "meteogram_ecmwf.png")):
         page = browser.new_page()
+        page.set_default_timeout(400000)
         try:
             page.set_content("<html><body></body></html>")
             page.add_script_tag(content=js)
