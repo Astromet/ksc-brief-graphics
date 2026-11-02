@@ -9,7 +9,16 @@ async function buildMeteogram(opts) {
   const V = ['temperature', 'relative_humidity', 'wind_speed', 'wind_direction', 'geopotential_height'];
   const hourly = V.flatMap(v => L.map(l => `${v}_${l}hPa`)).join(',');
   const url = `https://api.open-meteo.com/v1/${M.api}?latitude=${o.lat}&longitude=${o.lon}&hourly=${hourly}&models=${M.mdl}&forecast_days=${o.days + 1}&wind_speed_unit=kn&timezone=GMT`;
-  const d = await fetch(url).then(r => r.json());
+  let d = null, lastErr = '';
+  for (let k = 0; k < 5 && !d; k++) {
+    if (k) await new Promise(r => setTimeout(r, 15000 * k));
+    try {
+      const r = await fetch(url, {cache: 'no-store'}); const t = await r.text();
+      try { const j = JSON.parse(t); if (j.error) lastErr = `HTTP ${r.status}: ${j.reason}`; else d = j; }
+      catch (e) { lastErr = `HTTP ${r.status}: ${t.slice(0, 160)}`; }
+    } catch (e) { lastErr = String(e); }
+  }
+  if (!d) throw new Error(`Open-Meteo ${M.api} failed after retries - ${lastErr}`);
   if (d.error) throw new Error(d.reason || 'Open-Meteo error');
   let run = null;
   try { const m = await fetch(`https://api.open-meteo.com/data/${M.meta}/static/meta.json`).then(r => r.json()); run = new Date(m.last_run_initialisation_time * 1000); } catch (e) {}
