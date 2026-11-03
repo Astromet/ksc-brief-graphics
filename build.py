@@ -11,7 +11,7 @@ import sys
 import traceback
 from pathlib import Path
 
-from products import climatology, deck, nws_lead, satellite
+from products import climatology, deck, nhc_two, nws_lead, satellite
 from products.common import now_utc
 
 PLAIN = {
@@ -20,6 +20,7 @@ PLAIN = {
     "precip_ltg_climo": climatology.precip_ltg,
     "tc_activity": climatology.tc_activity,
     "tc_origin": climatology.tc_origin,
+    "nhc_7day": nhc_two.build,
 }
 BROWSER = ["meteograms", "sounding_climo", "tpw", "refs"]
 
