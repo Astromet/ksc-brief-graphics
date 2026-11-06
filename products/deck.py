@@ -148,7 +148,7 @@ def _peak_wind(files, out):
         pass
     for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
         xml = files[name].decode("utf-8")
-        if "Melbourne NWS Almanac" in xml:
+        if "Melbourne NWS" in xml:
             xml = re.sub("(<a:t>)nn/nn \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{normals}{m.group(2)}", xml, count=1)
             xml = re.sub("(<a:t>)rh \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{records['rec_hi']}{m.group(2)}", xml, count=1)
             xml = re.sub("(<a:t>)rl \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{records['rec_lo']}{m.group(2)}", xml, count=1)
