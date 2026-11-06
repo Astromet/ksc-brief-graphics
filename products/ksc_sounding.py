@@ -146,11 +146,11 @@ def star_chart(out):
         if "pw_in" in snd and fresh:
             pw = min(float(snd["pw_in"]), geo["ymax"])
             x, y = geo["x"], geo["y0"] - pw * geo["px_per_in"]
-            r = geo["dot_d"] * 0.85  # outer radius; star spans ~1.7x a dot's width
+            r = geo["dot_d"] * 1.7  # outer radius; star spans ~3.4x a dot's width
             sc = 4  # draw large and shrink for smooth edges
             big = im.resize((im.width * sc, im.height * sc), Image.LANCZOS)
             d = ImageDraw.Draw(big)
-            d.polygon(_star(x * sc, y * sc, r * sc, r * sc * 0.45), fill=(255, 221, 0),
+            d.polygon(_star(x * sc, y * sc, r * sc, r * sc * 0.45), fill=(255, 255, 0),
                       outline=(60, 60, 60), width=max(2, round(sc * geo["dot_d"] / 14)))
             im = big.resize(im.size, Image.LANCZOS)
             note = f"star at {pw:.2f} in"
