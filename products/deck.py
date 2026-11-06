@@ -103,14 +103,23 @@ def _peak_wind(files, out):
             value = f"{pw['kt']} KT"
     except Exception:  # noqa: BLE001
         pass
+    temps = "M/M F"
+    try:
+        if dt.datetime.now(dt.timezone.utc) - upd < dt.timedelta(hours=3) and "tmax_f" in pw:
+            temps = f"{pw['tmax_f']}/{pw['tmin_f']} F"
+    except Exception:  # noqa: BLE001
+        pass
     for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
         xml = files[name].decode("utf-8")
+        if "Max/Min" in xml:
+            xml = re.sub(r"(<a:t>)xx/xx F(</a:t>)", lambda m: f"{m.group(1)}{temps}{m.group(2)}", xml, count=1)
+            files[name] = xml.encode("utf-8")
         if "Peak Wind" not in xml:
             continue
         new, c = re.subn(r"(<a:t>)xx KT(</a:t>)", lambda m: f"{m.group(1)}{value}{m.group(2)}", xml, count=1)
         if c:
             files[name] = new.encode("utf-8")
-            return value
+            return f"{value}, temps {temps}"
     return value + " (cell not found)"
 
 

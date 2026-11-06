@@ -1,5 +1,5 @@
-"""Highest peak wind (gust) in the prior 24 hours from KSC-side weather towers,
-taken from the KSC Spaceport Weather Archive tower search (all heights)."""
+"""Prior-24-hour KSC tower extremes from the KSC Spaceport Weather Archive tower search:
+highest peak wind (all heights) and max/min temperature (sensors at 54 ft and below)."""
 import csv
 import datetime as dt
 import io
@@ -81,11 +81,26 @@ def build(out):
         n += 1
         if best is None or v > best[0]:
             best = (v, r.get("SiteName", "").strip(), r.get("Height", "").strip(), r.get("Date", ""), r.get("Time", ""))
-    result = {"window_start": f"{start:%Y-%m-%d %H:%MZ}", "window_end": f"{end:%Y-%m-%d %H:%MZ}",
+    # max / min temperature (deg F) from sensors at 54 ft and below
+    tmax = tmin = None
+    for r in rows:
+        try:
+            t = float(r.get("Temperature") or "nan")
+            h = float(r.get("Height") or "nan")
+        except ValueError:
+            continue
+        if not (h <= 54 and -20 < t < 120):
+            continue
+        tmax = t if tmax is None or t > tmax else tmax
+        tmin = t if tmin is None or t < tmin else tmin
+        result = {"window_start": f"{start:%Y-%m-%d %H:%MZ}", "window_end": f"{end:%Y-%m-%d %H:%MZ}",
               "reports": n, "updated": f"{now_utc():%Y-%m-%d %H:%MZ}"}
     if best:
         result.update({"kt": int(round(best[0])), "site": best[1], "height_ft": best[2], "time": f"{best[3]} {best[4]}"})
+    if tmax is not None:
+        result.update({"tmax_f": int(round(tmax)), "tmin_f": int(round(tmin))})
     (out / OUT_NAME).write_text(json.dumps(result, indent=1))
     if not best:
         return f"no peak-wind reports in window ({len(rows)} rows)"
-    return f"{result['kt']} KT at {best[1]} {best[2]} ft {best[3]} {best[4]} ({n} reports)"
+    temps = f"; max/min {result['tmax_f']}/{result['tmin_f']} F" if tmax is not None else "; no temps"
+    return f"{result['kt']} KT at {best[1]} {best[2]} ft {best[3]} {best[4]} ({n} reports){temps}"
