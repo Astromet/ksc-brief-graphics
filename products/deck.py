@@ -42,19 +42,25 @@ GFS_URL = ("https://mag.ncep.noaa.gov/data/gfs/{cc:02d}/west-atl/10m_wnd_precip/
 WEEKDAYS = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday"
 
 
-def _gfs_run(day):
+def _gfs_run(day, n_days=6):
     """Newest GFS run on MAG that can show 18Z on `day` (UTC date): (init datetime, cycle hour)."""
     v18 = dt.datetime(day.year, day.month, day.day, 18, tzinfo=dt.timezone.utc)
     for back in range(0, 30, 6):
         init = (v18 - dt.timedelta(hours=6 + back)).replace(minute=0)
         init = init.replace(hour=init.hour - init.hour % 6)
-        url = GFS_URL.format(cc=init.hour, fff=int((v18 - init).total_seconds() // 3600))
-        try:
-            r = requests.head(url, headers=UA, timeout=30, allow_redirects=True)
-            mod = parsedate_to_datetime(r.headers["Last-Modified"])
-        except Exception:  # noqa: BLE001
-            continue
-        if r.status_code == 200 and init + dt.timedelta(hours=2) <= mod <= init + dt.timedelta(hours=20):
+        f0 = int((v18 - init).total_seconds() // 3600)
+        ok = True
+        for fff in (f0, f0 + 24 * (n_days - 1)):  # first and last map must both be from this run
+            try:
+                r = requests.head(GFS_URL.format(cc=init.hour, fff=fff), headers=UA, timeout=30, allow_redirects=True)
+                mod = parsedate_to_datetime(r.headers["Last-Modified"])
+            except Exception:  # noqa: BLE001
+                ok = False
+                break
+            if not (r.status_code == 200 and init + dt.timedelta(hours=2) <= mod <= init + dt.timedelta(hours=20)):
+                ok = False
+                break
+        if ok:
             return init
     return None
 
@@ -70,7 +76,7 @@ def _gfs_slides(files, order):
     if not gfs:
         return "no GFS slides"
     today = now_local().date()
-    init = _gfs_run(today)
+    init = _gfs_run(today, len(gfs))
     for i, (name, rels_name) in enumerate(gfs):
         day = today + dt.timedelta(days=i)
         label = "This Afternoon" if i == 0 else "Tomorrow Afternoon" if i == 1 else f"{day:%A} Afternoon"
