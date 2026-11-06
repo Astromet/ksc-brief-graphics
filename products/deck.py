@@ -109,10 +109,10 @@ def _peak_wind(files, out):
             value = f"{pw['kt']} KT"
     except Exception:  # noqa: BLE001
         pass
-    temps = "M/M F"
+    temps = "M/M \u00b0F"
     try:
         if dt.datetime.now(dt.timezone.utc) - upd < dt.timedelta(hours=3) and "tmax_f" in pw:
-            temps = f"{pw['tmax_f']}/{pw['tmin_f']} F"
+            temps = f"{pw['tmax_f']}/{pw['tmin_f']} \u00b0F"
     except Exception:  # noqa: BLE001
         pass
     rain = "M"
@@ -128,8 +128,8 @@ def _peak_wind(files, out):
         if "Rainfall" in xml:
             xml = re.sub("(<a:t>)x\\.xx(\u201d</a:t>)", lambda m: f"{m.group(1)}{rain}{m.group(2)}", xml, count=1)
             files[name] = xml.encode("utf-8")
-        if "Max/Min" in xml:
-            xml = re.sub(r"(<a:t>)xx/xx F(</a:t>)", lambda m: f"{m.group(1)}{temps}{m.group(2)}", xml, count=1)
+        if "High/Low" in xml or "Max/Min" in xml:
+            xml = re.sub("(<a:t>)xx/xx (?:\u00b0)?F(</a:t>)", lambda m: f"{m.group(1)}{temps}{m.group(2)}", xml, count=1)
             files[name] = xml.encode("utf-8")
         if "Peak Wind" not in xml:
             continue
