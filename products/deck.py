@@ -92,6 +92,28 @@ def _slide_order(files):
     return ["ppt/" + tgt[r] for r in re.findall(r'<p:sldId [^>]*r:id="([^"]+)"', pres)]
 
 
+def _peak_wind(files, out):
+    """Write the KSC peak wind into the slide whose table has the 'KSC Peak Wind' row."""
+    import json
+    value = "M"
+    try:
+        pw = json.loads((out / "ksc_peak_wind.json").read_text())
+        upd = dt.datetime.strptime(pw["updated"], "%Y-%m-%d %H:%MZ").replace(tzinfo=dt.timezone.utc)
+        if "kt" in pw and dt.datetime.now(dt.timezone.utc) - upd < dt.timedelta(hours=3):
+            value = f"{pw['kt']} KT"
+    except Exception:  # noqa: BLE001
+        pass
+    for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
+        xml = files[name].decode("utf-8")
+        if "Peak Wind" not in xml:
+            continue
+        new, c = re.subn(r"(<a:t>)xx KT(</a:t>)", lambda m: f"{m.group(1)}{value}{m.group(2)}", xml, count=1)
+        if c:
+            files[name] = new.encode("utf-8")
+            return value
+    return value + " (cell not found)"
+
+
 def _convert(data, ext):
     """Return image bytes in the format implied by ext (keeps animation for GIF)."""
     im = Image.open(io.BytesIO(data))
@@ -189,6 +211,9 @@ def build(out):
     files[s1] = re.sub(rf"<a:t>\d{{1,2}} (?:{MONTHS}) \d{{4}}</a:t>".encode(),
                        f"<a:t>{today.day} {today:%B %Y}</a:t>".encode(), files[s1], count=1)
 
+    # KSC peak wind (prior 24 h, KSC-side towers) into the observations table; "M" if missing
+    peak_note = _peak_wind(files, out)
+
     # drop media no longer referenced by any relationship
     used = set()
     for n, b in files.items():
@@ -213,7 +238,7 @@ def build(out):
             z.writestr(n, files[n], compress_type=zipfile.ZIP_STORED if n.endswith((".gif", ".png", ".jpg", ".jpeg"))
                        else zipfile.ZIP_DEFLATED)
     tmp.replace(out / OUT_NAME)
-    note = f"{ok} pictures refreshed; {gfs_note}"
+    note = f"{ok} pictures refreshed; {gfs_note}; peak wind {peak_note}"
     if failed:
         note += f"; kept previous image for: {', '.join(failed[:8])}"
     return note
