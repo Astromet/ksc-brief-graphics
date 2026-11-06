@@ -4,7 +4,7 @@ weather.gov/wrh/climate?wfo=mlb&tab=observed."""
 import json
 import re
 
-from .common import get, now_utc
+from .common import get, now_local, now_utc
 
 LIST = "https://api.weather.gov/products/types/CLI/locations/MLB"
 OUT_NAME = "mlb_normals.json"
@@ -33,6 +33,15 @@ def parse(text):
                     years.append(ty.group(1))
                 res[key] = int(mm.group(1))
                 res[key + "_years"] = years
+    # sunrise / sunset for today's date (first listed date if today isn't there)
+    sun = re.findall(r"\n\s*([A-Z]+)\s+(\d{1,2})\s+(\d{4})\.+\s*SUNRISE\s+(\d{3,4})\s+([AP]M)\s+(E[SD]T)"
+                     r"\s+SUNSET\s+(\d{3,4})\s+([AP]M)\s+(E[SD]T)", text)
+    if sun:
+        today = now_local()
+        pick = next((t for t in sun if t[0][:3].title() == f"{today:%b}" and int(t[1]) == today.day), sun[0])
+        fmt = lambda hm, ap, tz: f"{int(hm[:-2])}:{hm[-2:]} {ap} {tz}"  # noqa: E731
+        res["sunrise"] = fmt(*pick[3:6])
+        res["sunset"] = fmt(*pick[6:9])
     issued = re.search(r"\n(\d{3,4} [AP]M E[SD]T \w{3} \w{3} +\d{1,2} \d{4})", text)
     return {"for": m.group(1).lower(), "normal_hi": int(hi.group(1)), "normal_lo": int(lo.group(1)),
             "issued": issued.group(1) if issued else "", **res}
