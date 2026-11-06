@@ -132,17 +132,23 @@ def _peak_wind(files, out):
     except Exception:  # noqa: BLE001
         pass
     normals = "M/M \u00b0F"
+    records = {"rec_hi": "M", "rec_lo": "M"}
     try:
         nj = json.loads((out / "mlb_normals.json").read_text())
         nupd = dt.datetime.strptime(nj["updated"], "%Y-%m-%d %H:%MZ").replace(tzinfo=dt.timezone.utc)
         if dt.datetime.now(dt.timezone.utc) - nupd < dt.timedelta(hours=6):
             normals = f"{nj['normal_hi']}/{nj['normal_lo']} \u00b0F"
+            for key in ("rec_hi", "rec_lo"):
+                if key in nj:
+                    records[key] = f"{nj[key]} \u00b0F ({', '.join(nj[key + '_years'])})"
     except Exception:  # noqa: BLE001
         pass
     for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
         xml = files[name].decode("utf-8")
         if "Melbourne NWS Almanac" in xml:
             xml = re.sub("(<a:t>)nn/nn \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{normals}{m.group(2)}", xml, count=1)
+            xml = re.sub("(<a:t>)rh \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{records['rec_hi']}{m.group(2)}", xml, count=1)
+            xml = re.sub("(<a:t>)rl \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{records['rec_lo']}{m.group(2)}", xml, count=1)
             files[name] = xml.encode("utf-8")
         if "Precipitable Water =" in xml:
             xml = re.sub(r"(<a:t>)x\.xx in(</a:t>)", lambda m: f"{m.group(1)}{pwat}{m.group(2)}", xml, count=1)
@@ -160,7 +166,7 @@ def _peak_wind(files, out):
         new, c = re.subn(r"(<a:t>)xx KT(</a:t>)", lambda m: f"{m.group(1)}{value}{m.group(2)}", xml, count=1)
         if c:
             files[name] = new.encode("utf-8")
-            return f"{value}, temps {temps}, rain {rain}, PW {pwat}, MLB normal {normals}"
+            return f"{value}, temps {temps}, rain {rain}, PW {pwat}, MLB normal {normals}, records {records['rec_hi']} / {records['rec_lo']}"
     return value + " (cell not found)"
 
 
