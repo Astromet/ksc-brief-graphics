@@ -1,10 +1,12 @@
 """Latest KXMR (Cape Canaveral) rawinsonde plot from the NWS Spaceflight Meteorology
 Group, plus its precipitable water read off the plot's bottom stats row (the 'PW'
 column, in mm) and converted to inches."""
+import datetime as dt
 import io
 import json
+import math
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from .common import get, now_utc
 
@@ -111,4 +113,48 @@ def build(out):
     except Exception as e:  # noqa: BLE001
         note = f"image saved; PW not read ({e})"
     (out / OUT_JSON).write_text(json.dumps(result, indent=1))
+    try:
+        star = star_chart(out)
+        note += f"; climo chart {star}"
+    except Exception as e:  # noqa: BLE001
+        note += f"; climo star failed ({e})"
+    return note
+
+
+def _star(cx, cy, r_out, r_in):
+    pts = []
+    for k in range(10):
+        r = r_out if k % 2 == 0 else r_in
+        a = math.radians(-90 + 36 * k)
+        pts.append((cx + r * math.cos(a), cy + r * math.sin(a)))
+    return pts
+
+
+def star_chart(out):
+    """Redraw snd_pw_climo.png from its clean copy with a yellow star at today's date
+    and the latest KXMR precipitable water (inches)."""
+    base = out / "snd_pw_climo_base.png"
+    if not base.exists():
+        return "no base chart"
+    im = Image.open(base).convert("RGB")
+    note = "no star (PW missing)"
+    try:
+        geo = json.loads((out / "snd_pw_climo_geo.json").read_text())
+        snd = json.loads((out / OUT_JSON).read_text())
+        upd = dt.datetime.strptime(snd["updated"], "%Y-%m-%d %H:%MZ").replace(tzinfo=dt.timezone.utc)
+        fresh = now_utc() - upd < dt.timedelta(hours=3)
+        if "pw_in" in snd and fresh:
+            pw = min(float(snd["pw_in"]), geo["ymax"])
+            x, y = geo["x"], geo["y0"] - pw * geo["px_per_in"]
+            r = geo["dot_d"] * 0.85  # outer radius; star spans ~1.7x a dot's width
+            sc = 4  # draw large and shrink for smooth edges
+            big = im.resize((im.width * sc, im.height * sc), Image.LANCZOS)
+            d = ImageDraw.Draw(big)
+            d.polygon(_star(x * sc, y * sc, r * sc, r * sc * 0.45), fill=(255, 221, 0),
+                      outline=(60, 60, 60), width=max(2, round(sc * geo["dot_d"] / 14)))
+            im = big.resize(im.size, Image.LANCZOS)
+            note = f"star at {pw:.2f} in"
+    except Exception as e:  # noqa: BLE001
+        note = f"no star ({type(e).__name__}: {e})"
+    im.save(out / "snd_pw_climo.png", optimize=True)
     return note

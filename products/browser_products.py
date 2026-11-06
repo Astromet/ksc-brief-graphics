@@ -2,6 +2,7 @@
 sounding-climatology chart + data readout."""
 import base64
 import io
+import json
 import re
 
 from PIL import Image, ImageChops, ImageDraw
@@ -36,13 +37,18 @@ HDR = ["Daily Min", "Min", "10%", "25%", "Median", "Daily Mean", "75%", "90%", "
 COL = ["3333CC", "00008B", "4FB3B0", "8B1A1A", "000000", "404040", "8B1A1A", "C8A04A", "E03030", "B22222"]
 
 
-def _trim(im, pad=6):
+def _trim_box(im, pad=6, full=False):
     bg = Image.new("RGB", im.size, (255, 255, 255))
     box = ImageChops.difference(im, bg).point(lambda v: 255 if v > 24 else 0).getbbox()
     if not box:
-        return im
+        box = (pad, pad, im.width - pad, im.height - pad)
     l, t, r, b = box
-    return im.crop((max(0, l - pad), max(0, t - pad), min(im.width, r + pad), min(im.height, b + pad)))
+    crop = (max(0, l - pad), max(0, t - pad), min(im.width, r + pad), min(im.height, b + pad))
+    return crop if full else crop[:2]
+
+
+def _trim(im, pad=6):
+    return im.crop(_trim_box(im, pad, full=True))
 
 
 def _table(date_label, vals):
@@ -115,9 +121,32 @@ def sounding_climo(out, browser):
             raise RuntimeError(f"data readout not populated: {lines[-1]!r}")
         page.evaluate("() => { const s = document.querySelector('#line-chart svg'); s.style.background = '#fff'; "
                       "s.style.backgroundColor = '#fff'; }")
+        # where today's dots sit and how PW maps to the vertical axis (SVG px), so the
+        # latest KXMR PW can be starred on the chart (see ksc_sounding.star_chart)
+        geo = page.evaluate("""() => {
+            const c = dc.chartRegistry.list()[0], svg = document.querySelector('#line-chart svg');
+            const sb = svg.getBoundingClientRect();
+            const dots = [...svg.querySelectorAll('circle.dot')].filter(e =>
+                +getComputedStyle(e).fillOpacity > 0.5 && getComputedStyle(e).display != 'none');
+            if (!dots.length) return null;
+            const b = dots[0].getBoundingClientRect();
+            const y = c.y(), top = c.margins().top;
+            return {x: b.x + b.width / 2 - sb.x, dot_d: b.width,
+                    y0: top + y(0) + svg.getBoundingClientRect().y - sb.y,
+                    y_per_in: y(0) - y(1), ymax: y.domain()[1]};
+        }""")
         png = page.locator("#line-chart svg").first.screenshot(omit_background=False)
-        chart = _trim(Image.open(io.BytesIO(png)).convert("RGB"))
-        chart.save(out / "snd_pw_climo.png", optimize=True)
+        raw = Image.open(io.BytesIO(png)).convert("RGB")
+        chart = _trim(raw)
+        chart.save(out / "snd_pw_climo_base.png", optimize=True)
+        if geo:
+            k = raw.width / page.evaluate("document.querySelector('#line-chart svg').getBoundingClientRect().width")
+            l, t = _trim_box(raw)
+            (out / "snd_pw_climo_geo.json").write_text(json.dumps({
+                "x": geo["x"] * k - l, "y0": geo["y0"] * k - t, "px_per_in": geo["y_per_in"] * k,
+                "dot_d": geo["dot_d"] * k, "ymax": geo["ymax"], "date": now_local().strftime("%Y-%m-%d")}))
+        from .ksc_sounding import star_chart
+        star_chart(out)
         _table(date_label, vals).save(out / "snd_pw_table.png", optimize=True)
         return f"{date_label}: {' '.join(vals)}"
     finally:
