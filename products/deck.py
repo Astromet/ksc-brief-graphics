@@ -123,6 +123,19 @@ def _peak_wind(files, out):
             rain = f"{rj['inches']:.2f}"
     except Exception:  # noqa: BLE001
         pass
+    pwat = "M"
+    try:
+        sj = json.loads((out / "ksc_sounding.json").read_text())
+        supd = dt.datetime.strptime(sj["updated"], "%Y-%m-%d %H:%MZ").replace(tzinfo=dt.timezone.utc)
+        if "pw_in" in sj and dt.datetime.now(dt.timezone.utc) - supd < dt.timedelta(hours=3):
+            pwat = f"{sj['pw_in']:.2f} in"
+    except Exception:  # noqa: BLE001
+        pass
+    for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
+        xml = files[name].decode("utf-8")
+        if "Precipitable Water =" in xml:
+            xml = re.sub(r"(<a:t>)x\.xx in(</a:t>)", lambda m: f"{m.group(1)}{pwat}{m.group(2)}", xml, count=1)
+            files[name] = xml.encode("utf-8")
     for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
         xml = files[name].decode("utf-8")
         if "Rainfall" in xml:
@@ -136,7 +149,7 @@ def _peak_wind(files, out):
         new, c = re.subn(r"(<a:t>)xx KT(</a:t>)", lambda m: f"{m.group(1)}{value}{m.group(2)}", xml, count=1)
         if c:
             files[name] = new.encode("utf-8")
-            return f"{value}, temps {temps}, rain {rain}"
+            return f"{value}, temps {temps}, rain {rain}, PW {pwat}"
     return value + " (cell not found)"
 
 
