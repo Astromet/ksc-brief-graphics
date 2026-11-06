@@ -115,8 +115,19 @@ def _peak_wind(files, out):
             temps = f"{pw['tmax_f']}/{pw['tmin_f']} F"
     except Exception:  # noqa: BLE001
         pass
+    rain = "M"
+    try:
+        rj = json.loads((out / "ksc_rain.json").read_text())
+        rupd = dt.datetime.strptime(rj["updated"], "%Y-%m-%d %H:%MZ").replace(tzinfo=dt.timezone.utc)
+        if "inches" in rj and dt.datetime.now(dt.timezone.utc) - rupd < dt.timedelta(hours=3):
+            rain = f"{rj['inches']:.2f}"
+    except Exception:  # noqa: BLE001
+        pass
     for name in [n for n in files if re.match(r"ppt/slides/slide\d+\.xml$", n)]:
         xml = files[name].decode("utf-8")
+        if "Rainfall" in xml:
+            xml = re.sub("(<a:t>)x\\.xx(\u201d</a:t>)", lambda m: f"{m.group(1)}{rain}{m.group(2)}", xml, count=1)
+            files[name] = xml.encode("utf-8")
         if "Max/Min" in xml:
             xml = re.sub(r"(<a:t>)xx/xx F(</a:t>)", lambda m: f"{m.group(1)}{temps}{m.group(2)}", xml, count=1)
             files[name] = xml.encode("utf-8")
@@ -125,7 +136,7 @@ def _peak_wind(files, out):
         new, c = re.subn(r"(<a:t>)xx KT(</a:t>)", lambda m: f"{m.group(1)}{value}{m.group(2)}", xml, count=1)
         if c:
             files[name] = new.encode("utf-8")
-            return f"{value}, temps {temps}"
+            return f"{value}, temps {temps}, rain {rain}"
     return value + " (cell not found)"
 
 
