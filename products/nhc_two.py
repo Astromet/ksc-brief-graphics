@@ -20,7 +20,9 @@ def _systems(page):
     start = page.find('id="view-atl-7d0"')
     if start < 0:
         raise RuntimeError("7-day Atlantic layer not found on NHC page")
-    end = page.find('id="view-atl-7d1"', start)
+    # the Atlantic 7-day layer ends where the next view (any basin/period) begins;
+    # with no Atlantic areas there is no 'view-atl-7d1', so never run on into the Pacific
+    end = page.find('id="view-', start + 10)
     sec = page[start:end if end > 0 else None]
     out = []
     for m in re.finditer(r'<g class="storm-system[^"]*"([^>]*)>(.*?)</g>', sec, re.S):
@@ -30,8 +32,8 @@ def _systems(page):
         name = re.search(r'data-name="([^"]*)"', attrs)
         pts = re.search(r'<polygon[^>]*points="([^"]+)"', body)
         circ = re.search(r'<circle[^>]*cx="([\d.]+)"[^>]*cy="([\d.]+)"', body)
-        if not prob:
-            continue
+        if not prob or (risk and risk.group(1).lower() not in COLORS):
+            continue  # active storms (risk="storm") have no formation chance
         xy = []
         if pts:
             v = [float(t) for t in re.split(r"[,\s]+", pts.group(1).strip()) if t]
