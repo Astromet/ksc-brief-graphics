@@ -24,7 +24,7 @@ def build(out):
     table = re.search(r"<table.*?</table>", page, re.S)
     if not table:
         raise RuntimeError("rainfall table not found")
-    best, n = None, 0
+    best, n, wet = None, 0, 0
     for row in re.findall(r"<tr.*?</tr>", table.group(0), re.S):
         c = _cells(row)
         if len(c) < 3 or not c[0].isdigit():
@@ -39,11 +39,17 @@ def build(out):
         if not 0 <= total < 30:
             continue
         n += 1
+        if round(total, 2) > 0:
+            wet += 1
         if best is None or total > best[0]:
             best = (total, g)
-    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}", "gauges": n}
+    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}", "gauges": n, "wet_gauges": wet}
     if best:
         result.update({"inches": round(best[0], 2), "gauge": best[1]})
+        # a lone 0.01" tip at a single gauge is treated as no rain
+        if wet == 1 and round(best[0], 2) == 0.01:
+            result.update({"inches": 0.0, "lone_tip_gauge": best[1]})
+            best = (0.0, best[1])
     (out / OUT_NAME).write_text(json.dumps(result, indent=1))
     if not best:
         raise RuntimeError("no KSC gauge totals in the report")
