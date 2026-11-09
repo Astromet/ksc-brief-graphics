@@ -81,7 +81,7 @@ def build(out):
         n += 1
         if best is None or v > best[0]:
             best = (v, r.get("SiteName", "").strip(), r.get("Height", "").strip(), r.get("Date", ""), r.get("Time", ""))
-    # max / min temperature (deg F) from sensors at 54 ft and below
+    # max / min temperature (deg F) from sensors below 54 ft
     tmax = tmin = None
     for r in rows:
         try:
