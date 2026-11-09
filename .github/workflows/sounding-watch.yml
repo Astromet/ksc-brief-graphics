@@ -1,12 +1,14 @@
 name: Watch for a new KXMR sounding
 
-# Polls the SMG sounding plot every 2 minutes and rebuilds the sounding, the
-# precipitable-water star and the deck as soon as a new plot is posted.
-# Each run watches for just under 6 hours; two runs a day cover ~09:30-21:30Z.
+# The morning KXMR sounding is posted between about 7:05 and 7:30 AM Eastern.
+# This job polls the SMG plot every 2 minutes from 7:00 to 7:45 AM Eastern and
+# rebuilds the sounding, the precipitable-water star and the deck as soon as a
+# new plot appears. Two start times cover EST/EDT and GitHub's schedule delays;
+# a later start replaces an earlier one.
 on:
   schedule:
-    - cron: "23 9 * * *"
-    - cron: "23 15 * * *"
+    - cron: "23 10 * * *"
+    - cron: "23 11 * * *"
   workflow_dispatch:
 
 permissions:
@@ -20,22 +22,26 @@ concurrency:
 jobs:
   watch:
     runs-on: ubuntu-latest
-    timeout-minutes: 358
+    timeout-minutes: 150
     steps:
-      - name: Poll the sounding plot
+      - name: Poll the sounding plot from 7:00 to 7:45 AM Eastern
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          TZ: America/New_York
           URL: https://www.weather.gov/images/smg/KSCSNDG.GIF
           UA: "KSC-brief-graphics (github.com/Astromet/ksc-brief-graphics)"
         run: |
+          start=$(date -d "today 07:00" +%s); end=$(date -d "today 07:45" +%s)
+          now=$(date +%s)
+          if [ "$now" -ge "$end" ]; then echo "past the 7:45 AM window"; exit 0; fi
+          if [ "$now" -lt "$start" ]; then echo "waiting until 7:00 AM Eastern"; sleep $(( start - now )); fi
           last=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/ksc_sounding.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
           echo "published sounding: ${last:-unknown}"
-          end=$(( $(date +%s) + 350*60 ))
           while [ "$(date +%s)" -lt "$end" ]; do
             lm=$(curl -fsSI -A "$UA" "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
             if [ -n "$lm" ] && [ "$lm" != "$last" ]; then
-              echo "$(date -u +%H:%MZ) new sounding plot ($lm), rebuilding"
+              echo "$(date +%H:%M) new sounding plot ($lm), rebuilding"
               gh api -X POST "repos/$GH_REPO/actions/workflows/update.yml/dispatches" -f ref=main -f "inputs[products]=ksc_sounding deck"
               last="$lm"
             fi
