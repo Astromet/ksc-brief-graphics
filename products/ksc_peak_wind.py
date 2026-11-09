@@ -1,5 +1,5 @@
 """Prior-24-hour KSC tower extremes from the KSC Spaceport Weather Archive tower search:
-highest peak wind (all heights) and max/min temperature (sensors at 54 ft and below)."""
+highest peak wind (all heights) and max/min temperature (sensors below 54 ft)."""
 import csv
 import datetime as dt
 import io
@@ -89,7 +89,7 @@ def build(out):
             h = float(r.get("Height") or "nan")
         except ValueError:
             continue
-        if not (h <= 54 and -20 < t < 120):
+        if not (h < 54 and -20 < t < 120):
             continue
         tmax = t if tmax is None or t > tmax else tmax
         tmin = t if tmin is None or t < tmin else tmin
