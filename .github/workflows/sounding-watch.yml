@@ -36,7 +36,7 @@ jobs:
             lm=$(curl -fsSI -A "$UA" "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
             if [ -n "$lm" ] && [ "$lm" != "$last" ]; then
               echo "$(date -u +%H:%MZ) new sounding plot ($lm), rebuilding"
-              gh workflow run update.yml -f products="ksc_sounding deck"
+              gh api -X POST "repos/$GH_REPO/actions/workflows/update.yml/dispatches" -f ref=main -f "inputs[products]=ksc_sounding deck"
               last="$lm"
             fi
             sleep 120
