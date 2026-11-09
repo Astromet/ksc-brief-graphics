@@ -100,12 +100,14 @@ def read_pw_mm(im):
 
 
 def build(out):
-    data = get(URL).content
+    resp = get(URL)
+    data = resp.content
     im = Image.open(io.BytesIO(data))
     im.seek(0)
     im = im.convert("RGB")
     im.save(out / OUT_IMG, optimize=True)
-    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}"}
+    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}",
+              "source_modified": resp.headers.get("Last-Modified", "")}
     try:
         mm, row = read_pw_mm(im)
         result.update({"pw_mm": mm, "pw_in": round(mm / 25.4, 2), "row": row})

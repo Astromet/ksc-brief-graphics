@@ -1,0 +1,43 @@
+name: Watch for a new KXMR sounding
+
+# Polls the SMG sounding plot every 2 minutes and rebuilds the sounding, the
+# precipitable-water star and the deck as soon as a new plot is posted.
+# Each run watches for just under 6 hours; two runs a day cover ~09:30-21:30Z.
+on:
+  schedule:
+    - cron: "23 9 * * *"
+    - cron: "23 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: sounding-watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 358
+    steps:
+      - name: Poll the sounding plot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          URL: https://www.weather.gov/images/smg/KSCSNDG.GIF
+          UA: "KSC-brief-graphics (github.com/Astromet/ksc-brief-graphics)"
+        run: |
+          last=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/ksc_sounding.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
+          echo "published sounding: ${last:-unknown}"
+          end=$(( $(date +%s) + 350*60 ))
+          while [ "$(date +%s)" -lt "$end" ]; do
+            lm=$(curl -fsSI -A "$UA" "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
+            if [ -n "$lm" ] && [ "$lm" != "$last" ]; then
+              echo "$(date -u +%H:%MZ) new sounding plot ($lm), rebuilding"
+              gh workflow run update.yml -f products="ksc_sounding deck"
+              last="$lm"
+            fi
+            sleep 120
+          done
