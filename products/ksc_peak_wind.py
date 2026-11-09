@@ -83,6 +83,7 @@ def build(out):
             best = (v, r.get("SiteName", "").strip(), r.get("Height", "").strip(), r.get("Date", ""), r.get("Time", ""))
     # max / min temperature (deg F) from sensors below 54 ft
     tmax = tmin = None
+    tsites = {}
     for r in rows:
         try:
             t = float(r.get("Temperature") or "nan")
@@ -91,6 +92,7 @@ def build(out):
             continue
         if not (h < 54 and -20 < t < 120):
             continue
+        tsites.setdefault(r.get("SiteName", "").strip(), set()).add(int(h))
         tmax = t if tmax is None or t > tmax else tmax
         tmin = t if tmin is None or t < tmin else tmin
         result = {"window_start": f"{start:%Y-%m-%d %H:%MZ}", "window_end": f"{end:%Y-%m-%d %H:%MZ}",
@@ -98,7 +100,9 @@ def build(out):
     if best:
         result.update({"kt": int(round(best[0])), "site": best[1], "height_ft": best[2], "time": f"{best[3]} {best[4]}"})
     if tmax is not None:
-        result.update({"tmax_f": int(round(tmax)), "tmin_f": int(round(tmin))})
+        result.update({"tmax_f": int(round(tmax)), "tmin_f": int(round(tmin)),
+                       "temp_towers": len(tsites),
+                       "temp_sensors": {k: sorted(v) for k, v in sorted(tsites.items())}})
     (out / OUT_NAME).write_text(json.dumps(result, indent=1))
     if not best:
         return f"no peak-wind reports in window ({len(rows)} rows)"
