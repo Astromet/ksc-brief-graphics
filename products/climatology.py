@@ -130,6 +130,12 @@ def _tc_origin_atlantic(im, url):
                         if sum(px[x + dx, y + dy]) > 120:  # keep black track lines
                             px[x + dx, y + dy] = ORG_OCEAN
     crop = im.crop((round(ORG_LEFT_X * k), round(ORG_MAP_TOP * k), im.width, im.height))
+    # redraw the frame's top edge clean (the old title's descenders touch it)
+    band = round(4 * k)
+    row = crop.crop((0, band, crop.width, band + 1))
+    for yy in range(band):
+        crop.paste(row, (0, yy))
+    ImageDraw.Draw(crop).line((0, 0, round((1590 - ORG_LEFT_X) * k), 0), fill="black", width=max(1, round(1.5 * k)))
     # blank the clipped "100W" tick label left over below the frame
     ImageDraw.Draw(crop).rectangle((0, round((ORG_MAP_BOT - ORG_MAP_TOP + 2) * k), round(30 * k), crop.height), fill="white")
     margin, title_h = round(62 * k), round(58 * k)
