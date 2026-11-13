@@ -2,6 +2,7 @@
 points-of-origin map for the current period."""
 import calendar
 import datetime as dt
+import re
 
 from PIL import Image, ImageDraw
 
@@ -93,7 +94,53 @@ def tc_origin(out):
             if im.width > 1600:
                 im = im.resize((1600, round(im.height * 1600 / im.width)), Image.LANCZOS)
             im.save(out / "tc_origin_current.png", optimize=True)
+            _tc_origin_atlantic(im, url).save(out / "tc_origin_atl.png", optimize=True)
             return url
         except Exception as e:  # noqa: BLE001
             err = e
     raise RuntimeError(f"no NHC origin map found: {err}")
+
+
+# NHC origin maps (scaled to 1600 px wide): map frame and graticule positions
+ORG_LEFT_X = 800      # ~98.5W, just west of the Gulf coast of Mexico: drop the Pacific basin
+ORG_MAP_TOP = 49      # top border of the map frame (title above it is redrawn)
+ORG_MAP_BOT = 637     # bottom border of the map frame
+ORG_OCEAN = (100, 162, 202)
+ORG_LAT_Y = {50: 122, 45: 188, 40: 248, 35: 305, 30: 358, 25: 408, 20: 456, 15: 503, 10: 548, 5: 593}
+
+
+def _tc_origin_atlantic(im, url):
+    """Gulf, Caribbean and Atlantic to Africa only, with the title and latitude
+    labels redrawn for the narrower map."""
+    k = im.width / 1600
+    mon_day = re.search(r"/([a-z]+)_(\d+)_(\d+)\.png$", url)
+    period = (f"{mon_day.group(1).title()} {mon_day.group(2)}-{mon_day.group(3)}" if mon_day else "")
+    im = im.copy()
+    # erase the East Pacific origin points still inside the crop (south of
+    # Guatemala/El Salvador: west of ~85.5W and south of ~13.5N)
+    px = im.load()
+    for x in range(round(ORG_LEFT_X * k), round(916 * k)):
+        for y in range(round(516 * k), round(ORG_MAP_BOT * k)):
+            r, g, b = px[x, y]
+            if r - b > 30:  # yellow dot or its anti-aliased edge (ocean/grey/black are <= 0)
+                for dx in (-1, 0, 1):
+                    for dy in (-1, 0, 1):
+                        if sum(px[x + dx, y + dy]) > 120:  # keep black track lines
+                            px[x + dx, y + dy] = ORG_OCEAN
+    crop = im.crop((round(ORG_LEFT_X * k), round(ORG_MAP_TOP * k), im.width, im.height))
+    # blank the clipped "100W" tick label left over below the frame
+    ImageDraw.Draw(crop).rectangle((0, round((ORG_MAP_BOT - ORG_MAP_TOP + 2) * k), round(30 * k), crop.height), fill="white")
+    margin, title_h = round(62 * k), round(58 * k)
+    W, H = crop.width + margin, crop.height + title_h
+    canvas = Image.new("RGB", (W, H), "white")
+    canvas.paste(crop, (margin, title_h))
+    d = ImageDraw.Draw(canvas)
+    title = f"{period} Atlantic Tropical & Subtropical Cyclone Points of Origin".strip()
+    size = round(34 * k)
+    while size > 12 and d.textlength(title, font=font(size)) > W - 20:
+        size -= 1
+    d.text((W / 2, title_h / 2 + 2), title, font=font(size), fill="black", anchor="mm")
+    f = font(round(19 * k))
+    for lat, y in ORG_LAT_Y.items():
+        d.text((margin - 6, title_h + (y - ORG_MAP_TOP) * k), f"{lat}\u00b0N", font=f, fill="black", anchor="rm")
+    return canvas
