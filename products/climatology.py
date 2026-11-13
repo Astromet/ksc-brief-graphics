@@ -114,7 +114,9 @@ def _tc_origin_atlantic(im, url):
     labels redrawn for the narrower map."""
     k = im.width / 1600
     mon_day = re.search(r"/([a-z]+)_(\d+)_(\d+)\.png$", url)
-    period = (f"{mon_day.group(1).title()} {mon_day.group(2)}-{mon_day.group(3)}" if mon_day else "")
+    months = {m.lower()[:3]: m for m in calendar.month_name if m}
+    period = (f"{months.get(mon_day.group(1)[:3], mon_day.group(1).title())} {mon_day.group(2)}-{mon_day.group(3)}"
+              if mon_day else "")
     im = im.copy()
     # erase the East Pacific origin points still inside the crop (south of
     # Guatemala/El Salvador: west of ~85.5W and south of ~13.5N)
