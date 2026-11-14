@@ -1,0 +1,78 @@
+{
+  "satellite": {
+    "ok": true,
+    "updated": "2026-11-14 11:42Z",
+    "note": "25 frames 0936-1136Z"
+  },
+  "nws_lead": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "https://www.weather.gov/images/mlb/graphicast/3.png"
+  },
+  "precip_ltg_climo": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "x=1096 for 2026-11-14"
+  },
+  "tc_activity": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "x=662 for 2026-11-14"
+  },
+  "tc_origin": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "https://www.nhc.noaa.gov/climo/images/nov_11_20.png"
+  },
+  "meteograms": {
+    "ok": false,
+    "tried": "2026-11-14 11:43Z",
+    "error": "Error: Page.evaluate: Error: Open-Meteo gfs failed after retries - TypeError: Failed to fetch\n    at buildMeteogram (<anonymous>:22:17)\n    at async eval (eval at evaluate (:370:30), <anonymous>:1:26)\n    at async <anonymous>:381:23",
+    "updated": "2026-11-14 10:46Z"
+  },
+  "sounding_climo": {
+    "ok": true,
+    "updated": "2026-11-14 11:46Z",
+    "note": "Nov 14 (12Z): 0.32 0.47 0.69 0.90 1.18 1.09 1.46 1.69 1.97 1.63"
+  },
+  "tpw": {
+    "ok": true,
+    "updated": "2026-11-14 11:46Z",
+    "note": "TPWViewer 36 frames; Latest MIMIC 1100 UTC 14 Nov, under an hour old. HRRR 10Z tail to 2300 UTC 14 Nov"
+  },
+  "refs": {
+    "ok": true,
+    "updated": "2026-11-14 11:47Z",
+    "note": "cycle 14/06Z F12; data responses {200: 715}; [\"error: wasm streaming compile failed: TypeError: Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.\", 'error: falling back to ArrayBuffer instantiation', 'GL: ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver) true true']"
+  },
+  "deck": {
+    "ok": true,
+    "updated": "2026-11-14 12:46Z",
+    "note": "39 pictures refreshed; GFS 14/06Z run; peak wind 28 KT, temps 74/49 \u00b0F, rain 0.00, PW 0.28 in, MLB normal 77/61 \u00b0F, records 87 \u00b0F (1970) / 40 \u00b0F (1963), sun 6:44 AM EST-5:30 PM EST"
+  },
+  "nhc_7day": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "no areas outlined"
+  },
+  "ksc_peak_wind": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "28 KT at 0313 NE  SW 492 ft 11/14/2026 02:00:00 (7239 reports); max/min 74/49 F"
+  },
+  "ksc_rain": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "0.00\" at gauge 1 (21 KSC gauges reporting)"
+  },
+  "ksc_sounding": {
+    "ok": true,
+    "updated": "2026-11-14 12:46Z",
+    "note": "PW 7 mm = 0.28 in (row: 141 1 15 1 9 ???? 17 ?57 7); climo chart star at 0.28 in"
+  },
+  "mlb_normals": {
+    "ok": true,
+    "updated": "2026-11-14 11:43Z",
+    "note": "normal 77/61 F (CLI issued 223 AM EST SAT NOV 14 2026)"
+  }
+}

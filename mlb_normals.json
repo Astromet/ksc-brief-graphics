@@ -1,0 +1,17 @@
+{
+ "for": "today",
+ "normal_hi": 77,
+ "normal_lo": 61,
+ "issued": "223 AM EST SAT NOV 14 2026",
+ "rec_hi": 87,
+ "rec_hi_years": [
+  "1970"
+ ],
+ "rec_lo": 40,
+ "rec_lo_years": [
+  "1963"
+ ],
+ "sunrise": "6:44 AM EST",
+ "sunset": "5:30 PM EST",
+ "updated": "2026-11-14 11:43Z"
+}
