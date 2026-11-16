@@ -1,0 +1,20 @@
+name: Thickness overlay experiment
+on:
+  workflow_dispatch:
+    inputs:
+      args: {description: "cycle fhour yyyymmdd", required: true}
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q requests pillow numpy scipy matplotlib pygrib
+      - run: mkdir -p out && python tools/thick_experiment.py ${{ github.event.inputs.args }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: out, path: out/}
