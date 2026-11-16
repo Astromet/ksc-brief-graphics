@@ -61,6 +61,39 @@ def bolder_borders(im):
     return Image.fromarray(a)
 
 
+def _label(ax, cs, styles, spacing=330, margin=28):
+    """Put each thickness value on its line inside the map view: at least one label on
+    every line segment that crosses the map, and one every `spacing` px along long lines."""
+    import matplotlib.patheffects as pe
+    x0, y0, x1, y1 = FRAME[0] + margin, FRAME[1] + margin, FRAME[2] - margin, FRAME[3] - margin
+    placed = []
+    for lev, segs, (color, _, _) in zip(cs.levels, cs.allsegs, styles):
+        for seg in segs:
+            inside = (seg[:, 0] > x0) & (seg[:, 0] < x1) & (seg[:, 1] > y0) & (seg[:, 1] < y1)
+            # split into runs of consecutive points inside the view
+            idx = np.flatnonzero(np.diff(np.r_[0, inside.astype(int), 0]))
+            for a, b in zip(idx[::2], idx[1::2]):
+                run = seg[a:b]
+                if len(run) < 2:
+                    continue
+                d = np.r_[0, np.cumsum(np.hypot(*np.diff(run, axis=0).T))]
+                total = d[-1]
+                if total < 60:
+                    continue
+                n = max(1, int(total // spacing))
+                for k in range(n):
+                    t = total * (k + 0.5) / n
+                    i = min(np.searchsorted(d, t), len(run) - 1)
+                    x, y = run[i]
+                    if any(abs(x - px) < 70 and abs(y - py) < 26 for px, py in placed):
+                        continue
+                    placed.append((x, y))
+                    ax.text(x, y, f"{lev:.0f}", color=color, fontsize=12, fontweight="bold",
+                            ha="center", va="center", zorder=5,
+                            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec=color, lw=1.0),
+                            path_effects=[pe.withStroke(linewidth=0.8, foreground="white")])
+
+
 def overlay(img_bytes, init, fff):
     """Return GIF bytes of the MAG map with thickness contours added."""
     import matplotlib
@@ -82,15 +115,18 @@ def overlay(img_bytes, init, fff):
     ax.set_ylim(H, 0)
     ax.axis("off")
     clip = Rectangle((FRAME[0], FRAME[1]), FRAME[2] - FRAME[0], FRAME[3] - FRAME[1], transform=ax.transData)
-    cs = ax.contour(X, Y, th, levels=LEVELS, colors="#e00000", linewidths=1.8, linestyles=[(0, (5, 3))])
+    styles = []
+    for lev in LEVELS:
+        if lev == 570:
+            styles.append(("#e00000", "solid", 2.4))
+        elif lev == 540:
+            styles.append(("#0040ff", "solid", 2.4))
+        else:
+            styles.append(("#e00000", (0, (5, 3)), 1.8))
+    cs = ax.contour(X, Y, th, levels=LEVELS, colors=[c for c, _, _ in styles],
+                    linestyles=[ls for _, ls, _ in styles], linewidths=[w for _, _, w in styles])
     cs.set_clip_path(clip)
-    labels = ax.clabel(cs, fmt="%d", fontsize=11, inline=True, inline_spacing=4)
-    for t in labels:
-        x, y = t.get_position()
-        if not (FRAME[0] + 15 < x < FRAME[2] - 15 and FRAME[1] + 10 < y < FRAME[3] - 10):
-            t.set_visible(False)
-        t.set_fontweight("bold")
-        t.set_path_effects([pe.withStroke(linewidth=2.5, foreground="white")])
+    _label(ax, cs, styles)
     fig.canvas.draw()
     rgb = np.asarray(fig.canvas.buffer_rgba())[..., :3]
     plt.close(fig)
