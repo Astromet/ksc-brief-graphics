@@ -240,12 +240,24 @@ def refs(out, browser):
                 page.wait_for_timeout(400)
             if member() != name:
                 raise RuntimeError(f"member {name!r} not found (at {member()!r})")
-            page.wait_for_timeout(20000)
-            try:
-                page.wait_for_load_state("networkidle", timeout=20000)
-            except Exception:  # noqa: BLE001
-                pass
-            page.wait_for_timeout(1500)
+            for attempt in range(3):
+                seen = len(msgs)
+                page.wait_for_timeout(20000)
+                try:
+                    page.wait_for_load_state("networkidle", timeout=20000)
+                except Exception:  # noqa: BLE001
+                    pass
+                page.wait_for_timeout(1500)
+                missing = any("Grid not found" in m for m in msgs[seen:]) or \
+                    page.locator("text=Not Available").count() > 0
+                if not missing or attempt == 2:
+                    break
+                # data briefly unavailable on SPC's side: step off the member and back to re-request it
+                msgs.append(f"retry {name}")
+                page.wait_for_timeout(30000)
+                key("ArrowUp")
+                page.wait_for_timeout(1500)
+                key("ArrowDown")
             png = page.screenshot()
             shot = Image.open(io.BytesIO(png)).convert("RGB")
             s = shot.width / VW
