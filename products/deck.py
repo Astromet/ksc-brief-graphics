@@ -197,7 +197,7 @@ def _convert(data, ext):
 def build(out):
     src = zipfile.ZipFile(ASSETS / "deck_template.pptx")
     files = {n: src.read(n) for n in src.namelist()}
-    cache, ok, failed, thick_ok = {}, 0, [], []
+    cache, ok, failed, thick_ok, thick_urls = {}, 0, [], [], set()
     gfs_note = _gfs_slides(files, _slide_order(files))
 
     def fetch(url):
@@ -214,6 +214,7 @@ def build(out):
                         from .gfs_thick import overlay
                         data = overlay(data, _GFS_INIT[0], int(m.group(2)))
                         thick_ok.append(m.group(2))
+                        thick_urls.add(url)
                     except Exception as e:  # noqa: BLE001
                         failed.append(f"thickness F{m.group(2)}: {type(e).__name__}: {str(e)[:80]}")
                 cache[url] = data
@@ -234,9 +235,18 @@ def build(out):
             etag, ltag = tags.get(embed_id), tags.get(link_id)
             if not etag or not ltag or _attr(ltag, "TargetMode") != "External":
                 continue
-            data = fetch(_attr(ltag, "Target").replace("&amp;", "&"))
+            link_url = _attr(ltag, "Target").replace("&amp;", "&")
+            data = fetch(link_url)
             if data is None:
                 continue
+            if link_url in thick_urls:
+                # PowerPoint re-reads linked pictures when the file opens, so point the
+                # link at our published copy (with thickness) instead of the plain MAG map
+                pub = f"gfs_thick_s{slide_no}.gif"
+                (out / pub).write_bytes(data)
+                new_ltag = ltag.replace(f'Target="{_attr(ltag, "Target")}"', f'Target="{BASE}{pub}"')
+                rels = rels.replace(ltag, new_ltag)
+                tags[link_id] = ltag = new_ltag
             old = _attr(etag, "Target")
             ext = posixpath.splitext(old)[1].lower()
             try:
