@@ -74,6 +74,14 @@ for kind in ("eq", "merc"):
                     if best is None or s < best[0]:
                         best = (s, kind, p)
 print("coarse", best)
+for kind_g in ("eq", "merc"):
+    for ay_g in (22.0, 24.1, 26.0):
+        Yg = 10 if kind_g == "eq" else merc(10)
+        pg = (18.8, 176 + 100 * 18.8, ay_g, 789 + ay_g * Yg)
+        sg = score(pg, kind_g)
+        print("guess", kind_g, ay_g, sg)
+        if sg < best[0]:
+            best = (sg, kind_g, pg)
 pts = allpts
 s0, kind, p0 = best
 res = optimize.minimize(lambda p: score(p, kind), p0, method="Nelder-Mead", options={"xatol": 0.01, "fatol": 1e-4, "maxiter": 4000})
