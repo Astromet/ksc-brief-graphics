@@ -44,8 +44,11 @@ for lev, segs in zip(cs.levels, cs.allsegs):
     for s in segs:
         if len(s) > 5:
             paths.append(s)
-pts = np.concatenate(paths)
+allpts = np.concatenate(paths)
 plt.close("all")
+rng = np.random.default_rng(0)
+sub = allpts[rng.choice(len(allpts), min(300, len(allpts)), replace=False)]
+pts = sub
 H, W = red.shape
 def merc(lat): return np.degrees(np.log(np.tan(np.pi / 4 + np.radians(lat) / 2)))
 def proj(p, kind):
@@ -60,17 +63,18 @@ def score(p, kind):
     return float(np.mean(np.minimum(d, 15)))
 best = None
 for kind in ("eq", "merc"):
-    for ax in np.arange(14, 26, 0.5):
-        for ay in np.arange(14, 26, 0.5):
+    for ax in np.arange(12, 30, 1.0):
+        for ay in np.arange(12, 30, 1.0):
             # anchor: lon -80 near image center x, lat 20 near center y; scan offsets
-            for cx in np.arange(W * 0.3, W * 0.7, 20):
-                for cy in np.arange(H * 0.3, H * 0.8, 20):
+            for cx in np.arange(W * 0.2, W * 0.8, 30):
+                for cy in np.arange(H * 0.2, H * 0.9, 30):
                     Y20 = 20 if kind == "eq" else merc(20)
                     p = (ax, cx + 80 * ax, ay, cy + ay * Y20)
                     s = score(p, kind)
                     if best is None or s < best[0]:
                         best = (s, kind, p)
 print("coarse", best)
+pts = allpts
 s0, kind, p0 = best
 res = optimize.minimize(lambda p: score(p, kind), p0, method="Nelder-Mead", options={"xatol": 0.01, "fatol": 1e-4, "maxiter": 4000})
 print("fine", kind, res.fun, list(res.x))
