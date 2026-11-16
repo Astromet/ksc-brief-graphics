@@ -39,6 +39,7 @@ GFS_RE = re.compile(r"https://mag\.ncep\.noaa\.gov/data/gfs/(\d{2})/west-atl/10m
                     r"gfs_west-atl_(\d{3})_10m_wnd_precip\.gif")
 GFS_URL = ("https://mag.ncep.noaa.gov/data/gfs/{cc:02d}/west-atl/10m_wnd_precip/"
            "gfs_west-atl_{fff:03d}_10m_wnd_precip.gif")
+_GFS_INIT = [None]  # run used for the GFS slides (set by _gfs_slides)
 WEEKDAYS = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday"
 
 
@@ -88,6 +89,7 @@ def _gfs_slides(files, order):
             fff = int((v18 - init).total_seconds() // 3600)
             rels = files[rels_name].decode("utf-8")
             files[rels_name] = GFS_RE.sub(GFS_URL.format(cc=init.hour, fff=fff), rels).encode("utf-8")
+    _GFS_INIT[0] = init
     return f"GFS {init:%d/%HZ} run" if init else "GFS run not verified; kept links"
 
 
@@ -195,7 +197,7 @@ def _convert(data, ext):
 def build(out):
     src = zipfile.ZipFile(ASSETS / "deck_template.pptx")
     files = {n: src.read(n) for n in src.namelist()}
-    cache, ok, failed = {}, 0, []
+    cache, ok, failed, thick_ok = {}, 0, [], []
     gfs_note = _gfs_slides(files, _slide_order(files))
 
     def fetch(url):
@@ -206,6 +208,14 @@ def build(out):
                 else:
                     data = get(url, tries=2, timeout=40).content
                 Image.open(io.BytesIO(data)).verify()
+                m = GFS_RE.fullmatch(url)
+                if m and _GFS_INIT[0] is not None and int(m.group(1)) == _GFS_INIT[0].hour:
+                    try:  # add the 1000-500 mb thickness (red dashed) for the same run/hour
+                        from .gfs_thick import overlay
+                        data = overlay(data, _GFS_INIT[0], int(m.group(2)))
+                        thick_ok.append(m.group(2))
+                    except Exception as e:  # noqa: BLE001
+                        failed.append(f"thickness F{m.group(2)}: {type(e).__name__}: {str(e)[:80]}")
                 cache[url] = data
             except Exception as e:  # noqa: BLE001
                 cache[url] = None
@@ -299,7 +309,7 @@ def build(out):
             z.writestr(n, files[n], compress_type=zipfile.ZIP_STORED if n.endswith((".gif", ".png", ".jpg", ".jpeg"))
                        else zipfile.ZIP_DEFLATED)
     tmp.replace(out / OUT_NAME)
-    note = f"{ok} pictures refreshed; {gfs_note}; peak wind {peak_note}"
+    note = f"{ok} pictures refreshed; {gfs_note}; thickness on {len(thick_ok)} GFS maps; peak wind {peak_note}"
     if failed:
         note += f"; kept previous image for: {', '.join(failed[:8])}"
     return note
