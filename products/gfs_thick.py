@@ -61,7 +61,7 @@ def bolder_borders(im):
     return Image.fromarray(a)
 
 
-def _label(ax, cs, styles, spacing=330, margin=28):
+def _label(ax, cs, styles, spacing=480, margin=28):
     """Put each thickness value on its line inside the map view: at least one label on
     every line segment that crosses the map, and one every `spacing` px along long lines."""
     import matplotlib.patheffects as pe
@@ -85,13 +85,11 @@ def _label(ax, cs, styles, spacing=330, margin=28):
                     t = total * (k + 0.5) / n
                     i = min(np.searchsorted(d, t), len(run) - 1)
                     x, y = run[i]
-                    if any(abs(x - px) < 70 and abs(y - py) < 26 for px, py in placed):
+                    if any(abs(x - px) < 60 and abs(y - py) < 20 for px, py in placed):
                         continue
                     placed.append((x, y))
-                    ax.text(x, y, f"{lev:.0f}", color=color, fontsize=12, fontweight="bold",
-                            ha="center", va="center", zorder=5,
-                            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec=color, lw=1.0),
-                            path_effects=[pe.withStroke(linewidth=0.8, foreground="white")])
+                    ax.text(x, y, f"{lev:.0f}", color=color, fontsize=10, ha="center", va="center",
+                            zorder=5, path_effects=[pe.withStroke(linewidth=2.5, foreground="white")])
 
 
 def overlay(img_bytes, init, fff):
