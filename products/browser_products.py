@@ -108,7 +108,7 @@ def sounding_climo(out, browser):
                                "getComputedStyle(document.querySelector('#loading-page')).display == 'none'",
                                timeout=120000)
         # redraw the main chart wider (less elongated), then mark today's 12Z values
-        page.evaluate("() => { const c = dc.chartRegistry.list()[0]; c.width(520).height(390); c.render(); }")
+        page.evaluate("() => { const c = dc.chartRegistry.list()[0]; c.width(650).height(390); c.render(); }")
         page.wait_for_timeout(2500)
         page.click("#gototoday12 a")
         page.wait_for_timeout(2500)
