@@ -6,6 +6,8 @@ still refreshes itself when PowerPoint is allowed to; the embedded images just
 make it current even when links are blocked or the computer is offline.
 """
 import io
+import json
+import time
 import posixpath
 import re
 import zipfile
@@ -40,6 +42,7 @@ GFS_RE = re.compile(r"https://mag\.ncep\.noaa\.gov/data/gfs/(\d{2})/west-atl/10m
 GFS_URL = ("https://mag.ncep.noaa.gov/data/gfs/{cc:02d}/west-atl/10m_wnd_precip/"
            "gfs_west-atl_{fff:03d}_10m_wnd_precip.gif")
 _GFS_INIT = [None]  # run used for the GFS slides (set by _gfs_slides)
+_GFS_DAY = {}       # slide file -> valid date of its GFS map (this build)
 WEEKDAYS = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday"
 
 
@@ -52,10 +55,17 @@ def _gfs_run(day, n_days=6):
         f0 = int((v18 - init).total_seconds() // 3600)
         ok = True
         for fff in (f0, f0 + 24 * (n_days - 1)):  # first and last map must both be from this run
-            try:
-                r = requests.head(GFS_URL.format(cc=init.hour, fff=fff), headers=UA, timeout=30, allow_redirects=True)
-                mod = parsedate_to_datetime(r.headers["Last-Modified"])
-            except Exception:  # noqa: BLE001
+            r = mod = None
+            for attempt in range(3):  # NCEP's MAG server sometimes times out; try again
+                try:
+                    r = requests.head(GFS_URL.format(cc=init.hour, fff=fff), headers=UA, timeout=30,
+                                      allow_redirects=True)
+                    mod = parsedate_to_datetime(r.headers["Last-Modified"])
+                    break
+                except Exception:  # noqa: BLE001
+                    r = mod = None
+                    time.sleep(5 * (attempt + 1))
+            if mod is None:
                 ok = False
                 break
             if not (r.status_code == 200 and init + dt.timedelta(hours=2) <= mod <= init + dt.timedelta(hours=20)):
@@ -66,8 +76,10 @@ def _gfs_run(day, n_days=6):
     return None
 
 
-def _gfs_slides(files, order):
-    """Point each GFS map at the newest run's image valid 18Z on its day, and retitle the slides."""
+def _gfs_slides(files, order, out=None):
+    """Point each GFS map at the newest run's image valid 18Z on its day, and retitle the slides.
+    If NCEP can't be reached, use our last published map for that day (with thickness), or
+    else the expected MAG image for the latest run, so every slide still shows its own day."""
     gfs = []
     for name in order:
         rels_name = posixpath.join("ppt/slides/_rels", posixpath.basename(name) + ".rels")
@@ -78,19 +90,36 @@ def _gfs_slides(files, order):
         return "no GFS slides"
     today = now_local().date()
     init = _gfs_run(today, len(gfs))
+    prev = {}
+    if init is None and out is not None:
+        try:
+            meta = json.loads((out / "gfs_slides.json").read_text())
+            prev = {v["valid"]: f"gfs_thick_s{k}.gif" for k, v in meta.items() if (out / f"gfs_thick_s{k}.gif").exists()}
+        except Exception:  # noqa: BLE001
+            prev = {}
+        now = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=5)
+        guess = now.replace(hour=now.hour - now.hour % 6, minute=0, second=0, microsecond=0)
     for i, (name, rels_name) in enumerate(gfs):
         day = today + dt.timedelta(days=i)
         label = "This Afternoon" if i == 0 else "Tomorrow Afternoon" if i == 1 else f"{day:%A} Afternoon"
         xml = files[name].decode("utf-8")
         xml = re.sub(rf"(GFS Model\s*:\s*)(?:This|Tomorrow|{WEEKDAYS}) Afternoon", rf"\g<1>{label}", xml, count=1)
         files[name] = xml.encode("utf-8")
+        v18 = dt.datetime(day.year, day.month, day.day, 18, tzinfo=dt.timezone.utc)
+        rels = files[rels_name].decode("utf-8")
         if init:
-            v18 = dt.datetime(day.year, day.month, day.day, 18, tzinfo=dt.timezone.utc)
             fff = int((v18 - init).total_seconds() // 3600)
-            rels = files[rels_name].decode("utf-8")
             files[rels_name] = GFS_RE.sub(GFS_URL.format(cc=init.hour, fff=fff), rels).encode("utf-8")
+            _GFS_DAY[posixpath.basename(name)] = f"{day:%Y-%m-%d}"
+        elif f"{day:%Y-%m-%d}" in prev:
+            files[rels_name] = GFS_RE.sub(BASE + prev[f"{day:%Y-%m-%d}"], rels).encode("utf-8")
+        else:
+            fff = int((v18 - guess).total_seconds() // 3600)
+            files[rels_name] = GFS_RE.sub(GFS_URL.format(cc=guess.hour, fff=fff), rels).encode("utf-8")
     _GFS_INIT[0] = init
-    return f"GFS {init:%d/%HZ} run" if init else "GFS run not verified; kept links"
+    return (f"GFS {init:%d/%HZ} run" if init else
+            f"GFS run not verified; used {sum(f'{today + dt.timedelta(days=i):%Y-%m-%d}' in prev for i in range(len(gfs)))}"
+            f" previous maps")
 
 
 def _slide_order(files):
@@ -198,7 +227,8 @@ def build(out):
     src = zipfile.ZipFile(ASSETS / "deck_template.pptx")
     files = {n: src.read(n) for n in src.namelist()}
     cache, ok, failed, thick_ok, thick_urls = {}, 0, [], [], set()
-    gfs_note = _gfs_slides(files, _slide_order(files))
+    gfs_note = _gfs_slides(files, _slide_order(files), out)
+    gfs_meta = {}
 
     def fetch(url):
         if url not in cache:
@@ -244,6 +274,9 @@ def build(out):
                 # link at our published copy (with thickness) instead of the plain MAG map
                 pub = f"gfs_thick_s{slide_no}.gif"
                 (out / pub).write_bytes(data)
+                if posixpath.basename(name) in _GFS_DAY:
+                    gfs_meta[slide_no] = {"valid": _GFS_DAY[posixpath.basename(name)],
+                                          "init": f"{_GFS_INIT[0]:%Y-%m-%dT%HZ}"}
                 new_ltag = ltag.replace(f'Target="{_attr(ltag, "Target")}"', f'Target="{BASE}{pub}"')
                 rels = rels.replace(ltag, new_ltag)
                 tags[link_id] = ltag = new_ltag
@@ -285,6 +318,9 @@ def build(out):
                                    if m.group(1) in added else m.group(0), xml)
             files[name] = xml.encode("utf-8")
         files[rels_name] = rels.encode("utf-8")
+
+    if gfs_meta:  # remember which day each published GFS map shows (fallback when NCEP is down)
+        (out / "gfs_slides.json").write_text(json.dumps(gfs_meta, indent=1))
 
     # title slide date
     s1 = "ppt/slides/slide1.xml"
