@@ -27,9 +27,10 @@ def ksc_launches(browser):
     finally:
         page.close()
     text = html.replace('\\"', '"').replace("&quot;", '"')
-    found = []
+    found, seen = [], 0
     for m in re.finditer(r'\{"id":\d+,"event_type_key":"([^"]*)","event_type_label":"([^"]*)"(.*?)"_debug_endpoint_version"', text, re.S):
         key, label, body = m.groups()
+        seen += 1
         if "launch" not in (key + " " + label).lower():
             continue
         flag = lambda k: re.search(rf'"{k}":true', body) is not None  # noqa: E731
@@ -41,6 +42,8 @@ def ksc_launches(browser):
             continue
         for d in re.findall(r'"([0-9]{4}-[0-9]{2}-[0-9]{2}T[^"]+)"', dates.group(1)):
             found.append({"name": json.loads(f'"{title.group(1)}"'), "time": d})
+    if not seen:
+        raise RuntimeError("calendar page had no events (blocked or changed?)")
     uniq = {(f["name"], f["time"]): f for f in found}
     return sorted(uniq.values(), key=lambda f: f["time"])
 
