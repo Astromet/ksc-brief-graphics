@@ -149,27 +149,31 @@ async function buildMeteogram(opts) {
     c.strokeStyle = '#e00000'; c.lineWidth = 1.5; c.strokeRect(xn - lw / 2, Y1 - 25, lw, 23);
     c.fillStyle = '#e00000'; c.fillText('NOW', xn, Y1 - 4); c.restore();
   }
-  // scheduled launches (official KSC Visitor Complex schedule): magenta line + name tag at top
-  const tags = [];
+  // scheduled launches (official KSC Visitor Complex schedule): magenta lines, then name tags at top
+  const tags = [], lx0 = [];
   for (const L0 of (o.launches || [])) {
     const tl = new Date(L0.time).getTime();
     if (!(tl >= tS && tl <= tE)) continue;
     const xl = X0 + (X1 - X0) * (tl - tS) / (tE - tS);
+    lx0.push([xl, tl, L0.name]);
     c.save(); c.strokeStyle = '#d4007a'; c.lineWidth = 4; c.setLineDash([]);
-    c.beginPath(); c.moveTo(xl, Y0); c.lineTo(xl, Y1); c.stroke();
+    c.beginPath(); c.moveTo(xl, Y0); c.lineTo(xl, Y1); c.stroke(); c.restore();
+  }
+  for (const [xl, tl, name] of lx0) {
     const d0 = new Date(tl);
     const sub = `${pad2(d0.getUTCDate())}/${pad2(d0.getUTCHours())}${pad2(d0.getUTCMinutes())}Z`;
-    c.font = 'bold 15px Arial'; const w1 = c.measureText(L0.name).width;
+    c.save();
+    c.font = 'bold 15px Arial'; const w1 = c.measureText(name).width;
     c.font = '12px Arial'; const w2 = c.measureText(sub).width;
     const w = Math.max(w1, w2) + 12, h = 36;
-    let bx = Math.min(Math.max(xl - w / 2, X0 + 2), X1 - w - 2), row = 0;
+    const bx = Math.min(Math.max(xl - w / 2, X0 + 2), X1 - w - 2); let row = 0;
     while (tags.some(t => t.row === row && !(bx + w < t.x || bx > t.x + t.w))) row++;
     const by = Y0 + 4 + row * (h + 4);
     tags.push({ x: bx, w, row });
     c.fillStyle = '#fff'; c.fillRect(bx, by, w, h);
     c.strokeStyle = '#d4007a'; c.lineWidth = 1.5; c.strokeRect(bx, by, w, h);
     c.fillStyle = '#d4007a'; c.textAlign = 'center'; c.textBaseline = 'top';
-    c.font = 'bold 15px Arial'; c.fillText(L0.name, bx + w / 2, by + 3);
+    c.font = 'bold 15px Arial'; c.fillText(name, bx + w / 2, by + 3);
     c.font = '12px Arial'; c.fillText(sub, bx + w / 2, by + 21);
     c.restore();
   }
