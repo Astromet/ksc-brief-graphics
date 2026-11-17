@@ -11,9 +11,50 @@ from .common import ASSETS, font, now_local
 
 
 # ------------------------------------------------------------------ meteograms
+KSCVC_CAL = ("https://www.kennedyspacecenter.com/launches-and-events/events-calendar/"
+             "?Event+Type=Rocket+Launch&Ticket+Type=All+Events")
+
+
+def ksc_launches(browser):
+    """Scheduled rocket launches from the official Kennedy Space Center Visitor Complex
+    events calendar: [{"name", "time" (ISO, with offset)}]. Launches whose date is TBD,
+    NET, or shown without a time are left out (no official T-0)."""
+    page = browser.new_page()
+    try:
+        page.goto(KSCVC_CAL, wait_until="domcontentloaded", timeout=90000)
+        page.wait_for_timeout(3000)
+        html = page.content()
+    finally:
+        page.close()
+    text = html.replace('\\"', '"').replace("&quot;", '"')
+    found = []
+    for m in re.finditer(r'\{"id":\d+,"event_type_key":"([^"]*)","event_type_label":"([^"]*)"(.*?)"_debug_endpoint_version"', text, re.S):
+        key, label, body = m.groups()
+        if "launch" not in (key + " " + label).lower():
+            continue
+        flag = lambda k: re.search(rf'"{k}":true', body) is not None  # noqa: E731
+        if flag("date_tbd") or flag("date_net") or flag("hide_time"):
+            continue
+        title = re.search(r'"title":"([^"]*)"', body)
+        dates = re.search(r'"dates":\[([^\]]*)\]', body)
+        if not title or not dates:
+            continue
+        for d in re.findall(r'"([0-9]{4}-[0-9]{2}-[0-9]{2}T[^"]+)"', dates.group(1)):
+            found.append({"name": json.loads(f'"{title.group(1)}"'), "time": d})
+    uniq = {(f["name"], f["time"]): f for f in found}
+    return sorted(uniq.values(), key=lambda f: f["time"])
+
+
 def meteograms(out, browser):
     js = (ASSETS / "meteogram.js").read_text()
     notes = []
+    try:
+        launches = ksc_launches(browser)
+        notes.append(f"{len(launches)} KSC launches")
+    except Exception as e:  # noqa: BLE001
+        launches = []
+        notes.append(f"launch schedule unavailable ({type(e).__name__})")
+    (out / "ksc_launches.json").write_text(json.dumps(launches, indent=1))
     for model, fname in (("gfs", "meteogram_gfs.png"), ("ecmwf", "meteogram_ecmwf.png")):
         page = browser.new_page()
         page.set_default_timeout(400000)
@@ -21,8 +62,8 @@ def meteograms(out, browser):
             page.set_content("<html><body></body></html>")
             page.add_script_tag(content=js)
             data_url = page.evaluate(
-                """async (m) => { const r = await buildMeteogram({model: m, W: 1600, H: 889});
-                                  return r.canvas.toDataURL('image/png'); }""", model)
+                """async ([m, launches]) => { const r = await buildMeteogram({model: m, W: 1600, H: 889, launches});
+                                  return r.canvas.toDataURL('image/png'); }""", [model, launches])
             png = base64.b64decode(data_url.split(",", 1)[1])
             Image.open(io.BytesIO(png)).convert("RGB").save(out / fname, optimize=True)
             notes.append(model)

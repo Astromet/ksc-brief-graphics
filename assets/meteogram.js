@@ -1,4 +1,5 @@
 // GFS time-height meteogram (RH shaded green, isotherms, wind barbs) from Open-Meteo GFS data.
+const pad2 = n => String(n).padStart(2, '0');
 async function buildMeteogram(opts) {
   const o = Object.assign({ lat: 28.4676, lon: -80.5668, site: 'KXMR', name: 'Cape Canaveral SFS', days: 7, W: 1600, H: 900, model: 'gfs' }, opts || {});
   const M = o.model === 'ecmwf'
@@ -147,6 +148,30 @@ async function buildMeteogram(opts) {
     c.fillStyle = '#fff'; c.fillRect(xn - lw / 2, Y1 - 25, lw, 23);
     c.strokeStyle = '#e00000'; c.lineWidth = 1.5; c.strokeRect(xn - lw / 2, Y1 - 25, lw, 23);
     c.fillStyle = '#e00000'; c.fillText('NOW', xn, Y1 - 4); c.restore();
+  }
+  // scheduled launches (official KSC Visitor Complex schedule): magenta line + name tag at top
+  const tags = [];
+  for (const L0 of (o.launches || [])) {
+    const tl = new Date(L0.time).getTime();
+    if (!(tl >= tS && tl <= tE)) continue;
+    const xl = X0 + (X1 - X0) * (tl - tS) / (tE - tS);
+    c.save(); c.strokeStyle = '#d4007a'; c.lineWidth = 4; c.setLineDash([]);
+    c.beginPath(); c.moveTo(xl, Y0); c.lineTo(xl, Y1); c.stroke();
+    const d0 = new Date(tl);
+    const sub = `${pad2(d0.getUTCDate())}/${pad2(d0.getUTCHours())}${pad2(d0.getUTCMinutes())}Z`;
+    c.font = 'bold 15px Arial'; const w1 = c.measureText(L0.name).width;
+    c.font = '12px Arial'; const w2 = c.measureText(sub).width;
+    const w = Math.max(w1, w2) + 12, h = 36;
+    let bx = Math.min(Math.max(xl - w / 2, X0 + 2), X1 - w - 2), row = 0;
+    while (tags.some(t => t.row === row && !(bx + w < t.x || bx > t.x + t.w))) row++;
+    const by = Y0 + 4 + row * (h + 4);
+    tags.push({ x: bx, w, row });
+    c.fillStyle = '#fff'; c.fillRect(bx, by, w, h);
+    c.strokeStyle = '#d4007a'; c.lineWidth = 1.5; c.strokeRect(bx, by, w, h);
+    c.fillStyle = '#d4007a'; c.textAlign = 'center'; c.textBaseline = 'top';
+    c.font = 'bold 15px Arial'; c.fillText(L0.name, bx + w / 2, by + 3);
+    c.font = '12px Arial'; c.fillText(sub, bx + w / 2, by + 21);
+    c.restore();
   }
   c.strokeStyle = '#000'; c.lineWidth = 1.5; c.setLineDash([]); c.strokeRect(X0, Y0, X1 - X0, Y1 - Y0);
   c.fillStyle = '#000'; c.font = 'bold 13px Arial'; c.textAlign = 'right'; c.textBaseline = 'middle';
