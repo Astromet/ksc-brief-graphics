@@ -1,4 +1,4 @@
-name: Watch for a new KXMR sounding
+name: Watch for a new KXMR sounding and NHC outlook
 
 # The morning KXMR sounding is posted (often more than once) between about 7:05 and 7:50 AM Eastern.
 # This job polls the SMG plot every minute from 7:00 to 8:05 AM Eastern and
@@ -24,12 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150
     steps:
-      - name: Poll the sounding plot from 7:00 to 8:05 AM Eastern
+      - name: Poll the sounding plot and NHC 7-day outlook from 7:00 to 8:05 AM Eastern
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           TZ: America/New_York
           URL: https://www.weather.gov/images/smg/KSCSNDG.GIF
+          NHC: https://www.nhc.noaa.gov/xgtwo/two_atl_7d0.png
           UA: "KSC-brief-graphics (github.com/Astromet/ksc-brief-graphics)"
         run: |
           start=$(date -d "today 07:00" +%s); end=$(date -d "today 08:05" +%s)
@@ -37,13 +38,18 @@ jobs:
           if [ "$now" -ge "$end" ]; then echo "past the 8:05 AM window"; exit 0; fi
           if [ "$now" -lt "$start" ]; then echo "waiting until 7:00 AM Eastern"; sleep $(( start - now )); fi
           last=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/ksc_sounding.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
-          echo "published sounding: ${last:-unknown}"
+          nlast=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/nhc_meta.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
+          echo "published sounding: ${last:-unknown}; published NHC outlook: ${nlast:-unknown}"
           while [ "$(date +%s)" -lt "$end" ]; do
             lm=$(curl -fsSI -A "$UA" "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
-            if [ -n "$lm" ] && [ "$lm" != "$last" ]; then
-              echo "$(date +%H:%M) new sounding plot ($lm), rebuilding"
-              gh api -X POST "repos/$GH_REPO/actions/workflows/update.yml/dispatches" -f ref=main -f "inputs[products]=ksc_sounding deck"
-              last="$lm"
+            nm=$(curl -fsSI -A "$UA" "$NHC" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
+            new=""
+            if [ -n "$lm" ] && [ "$lm" != "$last" ]; then new="sounding ($lm)"; last="$lm"; fi
+            if [ -n "$nm" ] && [ "$nm" != "$nlast" ]; then new="$new NHC outlook ($nm)"; nlast="$nm"; fi
+            if [ -n "$new" ]; then
+              # one combined rebuild: a newer queued run would replace (cancel) an older queued one
+              echo "$(date +%H:%M) new $new, rebuilding"
+              gh api -X POST "repos/$GH_REPO/actions/workflows/update.yml/dispatches" -f ref=main -f "inputs[products]=ksc_sounding nhc_7day deck"
             fi
             sleep 60
           done

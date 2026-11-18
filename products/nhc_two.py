@@ -2,6 +2,7 @@
 written next to its shaded area, in the shading's color."""
 import html as htmlmod
 import io
+import json
 import re
 
 from PIL import Image, ImageDraw
@@ -48,7 +49,10 @@ def _systems(page):
 
 def build(out):
     page = get(PAGE).text
-    im = Image.open(io.BytesIO(get(MAP).content)).convert("RGB")
+    resp = get(MAP)
+    im = Image.open(io.BytesIO(resp.content)).convert("RGB")
+    # remember which outlook this is (the morning watcher compares it with NHC's copy)
+    (out / "nhc_meta.json").write_text(json.dumps({"source_modified": resp.headers.get("Last-Modified", "")}))
     W, H = im.size
     s = W / SVG_W
     systems = _systems(page)
