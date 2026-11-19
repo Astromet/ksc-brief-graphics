@@ -133,6 +133,8 @@ def render(init, fff):
     for t in ax.clabel(cs, fmt="%d", fontsize=7.5, inline=True, inline_spacing=3):
         t.set_color("#4d4d4d")
 
+    _highs_lows(ax, pc, lons, lats, mslp, pe)
+
     # 10-m wind barbs (kt) every 1 degree
     s = 4
     ax.barbs(lons[::s, ::s], lats[::s, ::s], u[::s, ::s], v[::s, ::s], transform=pc, length=4.0,
@@ -203,3 +205,27 @@ def _label_thickness(ax, pc, lons, lats, th, styles, pe, spacing=480, margin=28)
                     ax.text(lon, lat, f"{lev:.0f}", color=color, fontsize=7.5, ha="center", va="center",
                             zorder=6, transform=pc,
                             path_effects=[pe.withStroke(linewidth=2.2, foreground="white")])
+
+
+def _highs_lows(ax, pc, lons, lats, mslp, pe, win=29, min_depth=1.5):
+    """Stamp a blue H / red L (with central pressure) at MSLP highs and lows that sit in
+    the slide's visible window. A center must be the extreme within ~7 deg and stand out
+    from its surroundings by at least `min_depth` mb."""
+    from scipy import ndimage
+    from .gfs_thick import _merc
+    sm = ndimage.gaussian_filter(mslp, 2.0)
+    mean = ndimage.uniform_filter(sm, win)
+    X, Y = AX * lons + BX, BY - AY * _merc(lats)
+    vis = (X > 131 + 25) & (X < 1120 - 25) & (Y > 34 + 25) & (Y < 647 - 15)
+    halo = [pe.withStroke(linewidth=3, foreground="white")]
+    for kind, ext, color in (("H", ndimage.maximum_filter, "#0033cc"), ("L", ndimage.minimum_filter, "#d40000")):
+        peak = (sm == ext(sm, size=win, mode="nearest")) & vis
+        if kind == "H":
+            peak &= sm - mean >= min_depth
+        else:
+            peak &= mean - sm >= min_depth
+        for j, i in zip(*np.nonzero(peak)):
+            ax.text(lons[j, i], lats[j, i], kind, transform=pc, color=color, fontsize=20, fontweight="bold",
+                    ha="center", va="center", zorder=7, path_effects=halo)
+            ax.text(lons[j, i], lats[j, i] - 1.0, f"{mslp[j, i]:.0f}", transform=pc, color=color, fontsize=8,
+                    fontweight="bold", ha="center", va="top", zorder=7, path_effects=halo)
