@@ -141,7 +141,7 @@ def render(init, fff):
                     linestyles=[ls for _, ls, _ in styles], linewidths=[w for _, _, w in styles],
                     transform=pc, zorder=5)
     # thickness labels: reuse the in-view labeler (works in display pixels of a 1280x1024 frame)
-    _label_projected(ax, ct, styles, pe)
+    _label_thickness(ax, pc, lon_t, lat_t, th, styles, pe)
 
     # title band like before
     valid = init + dt.timedelta(hours=fff)
@@ -155,23 +155,23 @@ def render(init, fff):
     return buf.getvalue()
 
 
-def _label_projected(ax, cs, styles, pe, spacing=480, margin=28):
-    """Thickness value labels placed along the lines inside the visible slide area."""
-    fig = ax.figure
-    fig.canvas.draw()
-    to_px = ax.transData
-    inv = fig.dpi_scale_trans  # noqa: F841
-    sx = fig.bbox.width / W   # display px per MAG px
-    # visible window of the slide crop (MAG px): x 131..1120, y 34..647
-    x0, x1, y0, y1 = 131 + margin, 1120 - margin, 34 + margin, 647 - margin
+def _label_thickness(ax, pc, lons, lats, th, styles, pe, spacing=480, margin=28):
+    """Thickness value labels along the lines, inside the slide's visible window.
+    Positions are worked out in MAG pixel space (same Mercator mapping as the map)."""
+    import matplotlib.pyplot as plt
+    from .gfs_thick import _merc
+    X, Y = AX * lons + BX, BY - AY * _merc(lats)
+    f2 = plt.figure()
+    cs = f2.add_subplot().contour(X, Y, th, levels=LEVELS)
+    allsegs = cs.allsegs
+    plt.close(f2)
+    x0, x1, y0, y1 = 131 + margin, 1120 - margin, 34 + margin, 647 - margin  # slide crop window
     placed = []
-    for lev, segs, (color, _, _) in zip(cs.levels, cs.allsegs, styles):
+    for lev, segs, (color, _, _) in zip(LEVELS, allsegs, styles):
         for seg in segs:
             if len(seg) < 2:
                 continue
-            disp = to_px.transform(seg)
-            px = disp[:, 0] / sx
-            py = (fig.bbox.height - disp[:, 1]) / sx
+            px, py = seg[:, 0], seg[:, 1]
             inside = (px > x0) & (px < x1) & (py > y0) & (py < y1)
             idx = np.flatnonzero(np.diff(np.r_[0, inside.astype(int), 0]))
             for a, b in zip(idx[::2], idx[1::2]):
@@ -184,10 +184,12 @@ def _label_projected(ax, cs, styles, pe, spacing=480, margin=28):
                 n = max(1, int(d[-1] // spacing))
                 for k in range(n):
                     i = min(np.searchsorted(d, d[-1] * (k + 0.5) / n), len(rx) - 1)
-                    X, Y = rx[i], ry[i]
-                    if any(abs(X - qx) < 60 and abs(Y - qy) < 20 for qx, qy in placed):
+                    Xp, Yp = rx[i], ry[i]
+                    if any(abs(Xp - qx) < 60 and abs(Yp - qy) < 20 for qx, qy in placed):
                         continue
-                    placed.append((X, Y))
-                    ax.text(seg[a + i, 0], seg[a + i, 1], f"{lev:.0f}", color=color, fontsize=7.5,
-                            ha="center", va="center", zorder=6, transform=ax.transData,
+                    placed.append((Xp, Yp))
+                    lon = (Xp - BX) / AX
+                    lat = _inv_merc((BY - Yp) / AY)
+                    ax.text(lon, lat, f"{lev:.0f}", color=color, fontsize=7.5, ha="center", va="center",
+                            zorder=6, transform=pc,
                             path_effects=[pe.withStroke(linewidth=2.2, foreground="white")])
