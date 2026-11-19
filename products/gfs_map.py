@@ -112,7 +112,7 @@ def render(init, fff):
                 colors=[(0.80, 0.82, 0.83, a) for a in (0.30, 0.45, 0.60, 0.75)])
     cf = ax.contourf(lons, lats, pcp, levels=P_LEVELS, colors=P_COLORS, alpha=0.82, transform=pc, zorder=1)
 
-    ax.add_feature(cfeature.COASTLINE.with_scale("50m"), edgecolor="#2b2b2b", linewidth=0.9, zorder=2)
+    ax.add_feature(cfeature.COASTLINE.with_scale("50m"), edgecolor="#000000", linewidth=1.3, zorder=2)
     ax.add_feature(cfeature.BORDERS.with_scale("50m"), edgecolor="#2b2b2b", linewidth=0.8, zorder=2)
     ax.add_feature(cfeature.STATES.with_scale("50m"), edgecolor="#555555", linewidth=0.5, zorder=2)
 
