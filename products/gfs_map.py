@@ -17,6 +17,7 @@ from .gfs_thick import AX, AY, BX, BY, LEVELS, thickness
 
 SCALE = 2
 W, H = 1280, 1024
+BAND_BOT = 647  # bottom edge of the slide's crop of this image (MAG px)
 NOMADS = ("https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl?"
           "file=gfs.t{cc:02d}z.pgrb2.0p25.f{fff:03d}"
           "&lev_mean_sea_level=on&lev_10_m_above_ground=on&lev_surface=on&lev_entire_atmosphere=on"
@@ -155,10 +156,10 @@ def render(init, fff):
     # thickness labels: reuse the in-view labeler (works in display pixels of a 1280x1024 frame)
     _label_thickness(ax, pc, lon_t, lat_t, th, styles, pe)
 
-    # title band like before
+    # product line in a band along the bottom of the area the slide shows (MAG px 613-647)
     valid = init + dt.timedelta(hours=fff)
-    ax.add_patch(plt.Rectangle((0, 1 - 34 / H), 1, 34 / H, transform=ax.transAxes, color="white", zorder=8))
-    ax.text(0.5, 1 - 17 / H, f"GFS {init:%m/%d/%y %H}UTC  {fff:03d}HR FCST  VALID {valid:%a %m/%d/%y %H}UTC   "
+    ax.add_patch(plt.Rectangle((0, 1 - BAND_BOT / H), 1, 34 / H, transform=ax.transAxes, color="white", zorder=8))
+    ax.text(0.5, 1 - (BAND_BOT - 17) / H, f"GFS {init:%m/%d/%y %H}UTC  {fff:03d}HR FCST  VALID {valid:%a %m/%d/%y %H}UTC   "
             "6-HR PRECIP (IN), CLOUD COVER, MSLP (MB), 10-M WIND (KT), 1000-500 MB THICKNESS (DAM)",
             transform=ax.transAxes, ha="center", va="center", fontsize=7.5, zorder=9)
     buf = io.BytesIO()
@@ -181,7 +182,7 @@ def _label_thickness(ax, pc, lons, lats, th, styles, pe, spacing=480, margin=28)
     cs = f2.add_subplot().contour(X, Y, th, levels=LEVELS)
     allsegs = cs.allsegs
     plt.close(f2)
-    x0, x1, y0, y1 = 131 + margin, 1120 - margin, 34 + margin, 647 - margin  # slide crop window
+    x0, x1, y0, y1 = 131 + margin, 1120 - margin, 0 + margin, BAND_BOT - 34 - margin  # visible map
     placed = []
     for lev, segs, (color, _, _) in zip(LEVELS, allsegs, styles):
         for seg in segs:
@@ -220,7 +221,7 @@ def _highs_lows(ax, pc, lons, lats, mslp, pe, win=29, min_depth=1.5):
     sm = ndimage.gaussian_filter(mslp, 2.0)
     mean = ndimage.uniform_filter(sm, win)
     X, Y = AX * lons + BX, BY - AY * _merc(lats)
-    vis = (X > 131 + 25) & (X < 1120 - 25) & (Y > 34 + 25) & (Y < 647 - 15)
+    vis = (X > 131 + 25) & (X < 1120 - 25) & (Y > 0 + 25) & (Y < BAND_BOT - 34 - 15)
     halo = [pe.withStroke(linewidth=3, foreground="white")]
     for kind, ext, color in (("H", ndimage.maximum_filter, "#0033cc"), ("L", ndimage.minimum_filter, "#d40000")):
         peak = (sm == ext(sm, size=win, mode="nearest")) & vis
