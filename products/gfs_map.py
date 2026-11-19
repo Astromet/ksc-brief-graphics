@@ -123,9 +123,9 @@ def render(init, fff):
     for t in ax.clabel(cs, fmt="%d", fontsize=7.5, inline=True, inline_spacing=3):
         t.set_color("#4d4d4d")
 
-    # 10-m wind barbs (kt) every 1.5 degrees
-    s = 6
-    ax.barbs(lons[::s, ::s], lats[::s, ::s], u[::s, ::s], v[::s, ::s], transform=pc, length=4.6,
+    # 10-m wind barbs (kt) every 1 degree
+    s = 4
+    ax.barbs(lons[::s, ::s], lats[::s, ::s], u[::s, ::s], v[::s, ::s], transform=pc, length=4.0,
              linewidth=0.6, color="black", zorder=4, sizes=dict(emptybarb=0))
 
     # 1000-500 mb thickness: 570 solid red, 540 solid blue, others red dashed (as before)
