@@ -19,8 +19,8 @@ SCALE = 2
 W, H = 1280, 1024
 NOMADS = ("https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl?"
           "file=gfs.t{cc:02d}z.pgrb2.0p25.f{fff:03d}"
-          "&lev_mean_sea_level=on&lev_10_m_above_ground=on&lev_surface=on"
-          "&var_PRMSL=on&var_UGRD=on&var_VGRD=on&var_APCP=on"
+          "&lev_mean_sea_level=on&lev_10_m_above_ground=on&lev_surface=on&lev_entire_atmosphere=on"
+          "&var_PRMSL=on&var_UGRD=on&var_VGRD=on&var_APCP=on&var_TCDC=on"
           "&subregion=&leftlon=-115&rightlon=-35&toplat=52&bottomlat=-8&dir=%2Fgfs.{ymd}%2F{cc:02d}%2Fatmos")
 LAND, OCEAN = "#f6e7c8", "#d9e6e8"
 LINE = "#4a4a4a"
@@ -34,7 +34,7 @@ def _inv_merc(m):
 
 
 def _fields(init, fff):
-    """MSLP (mb), 10-m u/v (kt), 6-h precip ending at fff (in), lats, lons."""
+    """MSLP (mb), 10-m u/v (kt), 6-h precip ending at fff (in), total cloud (%), lats, lons."""
     import pygrib
 
     def grab(f):
@@ -72,8 +72,15 @@ def _fields(init, fff):
     else:
         pcp = np.zeros_like(mslp)
     pcp = np.clip(np.asarray(pcp), 0, None) / 25.4  # kg m-2 (mm) -> inches
+    # total cloud cover (%): the record with the shortest averaging period ending at fff
+    tc = [r for r in by.get("tcc", []) if int(getattr(r, "endStep", fff)) == fff] or by.get("tcc", [])
+    if tc:
+        r = min(tc, key=lambda r: int(r.endStep) - int(r.startStep))
+        cloud = np.asarray(r.values)
+    else:
+        cloud = np.zeros_like(pcp)
     lons = np.where(lons > 180, lons - 360, lons)
-    return np.asarray(mslp) / 100.0, np.asarray(u), np.asarray(v), pcp, lats, lons
+    return np.asarray(mslp) / 100.0, np.asarray(u), np.asarray(v), pcp, cloud, lats, lons
 
 
 def render(init, fff):
@@ -85,7 +92,7 @@ def render(init, fff):
     import matplotlib.patheffects as pe
     import matplotlib.pyplot as plt
 
-    mslp, u, v, pcp, lats, lons = _fields(init, fff)
+    mslp, u, v, pcp, cloud, lats, lons = _fields(init, fff)
     lat_t, lon_t, th = thickness(init, fff)
 
     # extent from the MAG pixel mapping (full image, Mercator)
@@ -100,6 +107,9 @@ def render(init, fff):
     ax.add_feature(cfeature.LAND.with_scale("50m"), facecolor=LAND, edgecolor="none", zorder=0)
     ax.add_feature(cfeature.LAKES.with_scale("50m"), facecolor=OCEAN, edgecolor=LINE, linewidth=0.4, zorder=0.5)
 
+    # total cloud cover: light gray veil, more opaque where cloudier (under the precip)
+    ax.contourf(lons, lats, cloud, levels=[20, 40, 60, 80, 101], transform=pc, zorder=0.8,
+                colors=[(0.80, 0.82, 0.83, a) for a in (0.30, 0.45, 0.60, 0.75)])
     cf = ax.contourf(lons, lats, pcp, levels=P_LEVELS, colors=P_COLORS, alpha=0.82, transform=pc, zorder=1)
 
     ax.add_feature(cfeature.COASTLINE.with_scale("50m"), edgecolor="#2b2b2b", linewidth=0.9, zorder=2)
@@ -147,7 +157,7 @@ def render(init, fff):
     valid = init + dt.timedelta(hours=fff)
     ax.add_patch(plt.Rectangle((0, 1 - 34 / H), 1, 34 / H, transform=ax.transAxes, color="white", zorder=8))
     ax.text(0.5, 1 - 17 / H, f"GFS {init:%m/%d/%y %H}UTC  {fff:03d}HR FCST  VALID {valid:%a %m/%d/%y %H}UTC   "
-            "6-HR PRECIP (IN), MSLP (MB), 10-M WIND (KT), 1000-500 MB THICKNESS (DAM)",
+            "6-HR PRECIP (IN), CLOUD COVER, MSLP (MB), 10-M WIND (KT), 1000-500 MB THICKNESS (DAM)",
             transform=ax.transAxes, ha="center", va="center", fontsize=7.5, zorder=9)
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=100 * SCALE)
