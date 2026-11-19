@@ -15,7 +15,6 @@ import zipfile
 from PIL import Image
 
 import datetime as dt
-from email.utils import parsedate_to_datetime
 
 import requests
 
@@ -46,29 +45,28 @@ _GFS_DAY = {}       # slide file -> valid date of its GFS map (this build)
 WEEKDAYS = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday"
 
 
+NOMADS_IDX = ("https://nomads.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.{ymd}/{cc:02d}/atmos/"
+              "gfs.t{cc:02d}z.pgrb2.0p25.f{fff:03d}.idx")
+
+
 def _gfs_run(day, n_days=6):
-    """Newest GFS run on MAG that can show 18Z on `day` (UTC date): (init datetime, cycle hour)."""
+    """Newest GFS run on NOMADS that can show 18Z on `day` (UTC date) for all n_days maps."""
     v18 = dt.datetime(day.year, day.month, day.day, 18, tzinfo=dt.timezone.utc)
     for back in range(0, 30, 6):
         init = (v18 - dt.timedelta(hours=6 + back)).replace(minute=0)
         init = init.replace(hour=init.hour - init.hour % 6)
         f0 = int((v18 - init).total_seconds() // 3600)
         ok = True
-        for fff in (f0, f0 + 24 * (n_days - 1)):  # first and last map must both be from this run
-            r = mod = None
-            for attempt in range(3):  # NCEP's MAG server sometimes times out; try again
+        for fff in (f0, f0 + 24 * (n_days - 1)):  # first and last map must both be posted
+            status = None
+            for attempt in range(3):  # NOMADS sometimes times out; try again
                 try:
-                    r = requests.head(GFS_URL.format(cc=init.hour, fff=fff), headers=UA, timeout=30,
-                                      allow_redirects=True)
-                    mod = parsedate_to_datetime(r.headers["Last-Modified"])
+                    status = requests.head(NOMADS_IDX.format(ymd=f"{init:%Y%m%d}", cc=init.hour, fff=fff),
+                                           headers=UA, timeout=30, allow_redirects=True).status_code
                     break
                 except Exception:  # noqa: BLE001
-                    r = mod = None
                     time.sleep(5 * (attempt + 1))
-            if mod is None:
-                ok = False
-                break
-            if not (r.status_code == 200 and init + dt.timedelta(hours=2) <= mod <= init + dt.timedelta(hours=20)):
+            if status != 200:
                 ok = False
                 break
         if ok:
@@ -94,7 +92,7 @@ def _gfs_slides(files, order, out=None):
     if init is None and out is not None:
         try:
             meta = json.loads((out / "gfs_slides.json").read_text())
-            prev = {v["valid"]: f"gfs_thick_s{k}.gif" for k, v in meta.items() if (out / f"gfs_thick_s{k}.gif").exists()}
+            prev = {v["valid"]: f"gfs_map_s{k}.png" for k, v in meta.items() if (out / f"gfs_map_s{k}.png").exists()}
         except Exception:  # noqa: BLE001
             prev = {}
         now = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=5)
@@ -233,20 +231,22 @@ def build(out):
     def fetch(url):
         if url not in cache:
             try:
-                if url.startswith(BASE):
-                    data = (out / url[len(BASE):].split("?")[0]).read_bytes()
-                else:
-                    data = get(url, tries=2, timeout=40).content
-                Image.open(io.BytesIO(data)).verify()
                 m = GFS_RE.fullmatch(url)
+                data = None
                 if m and _GFS_INIT[0] is not None and int(m.group(1)) == _GFS_INIT[0].hour:
-                    try:  # add the 1000-500 mb thickness (red dashed) for the same run/hour
-                        from .gfs_thick import overlay
-                        data = overlay(data, _GFS_INIT[0], int(m.group(2)))
+                    try:  # draw our own GFS surface map from NOMADS data (gfs_map.py)
+                        from .gfs_map import render
+                        data = render(_GFS_INIT[0], int(m.group(2)))
                         thick_ok.append(m.group(2))
                         thick_urls.add(url)
                     except Exception as e:  # noqa: BLE001
-                        failed.append(f"thickness F{m.group(2)}: {type(e).__name__}: {str(e)[:80]}")
+                        failed.append(f"GFS map F{m.group(2)}: {type(e).__name__}: {str(e)[:80]}")
+                if data is None:
+                    if url.startswith(BASE):
+                        data = (out / url[len(BASE):].split("?")[0]).read_bytes()
+                    else:
+                        data = get(url, tries=2, timeout=40).content
+                Image.open(io.BytesIO(data)).verify()
                 cache[url] = data
             except Exception as e:  # noqa: BLE001
                 cache[url] = None
@@ -271,8 +271,8 @@ def build(out):
                 continue
             if link_url in thick_urls:
                 # PowerPoint re-reads linked pictures when the file opens, so point the
-                # link at our published copy (with thickness) instead of the plain MAG map
-                pub = f"gfs_thick_s{slide_no}.gif"
+                # link at our published map instead of the plain MAG map
+                pub = f"gfs_map_s{slide_no}.png"
                 (out / pub).write_bytes(data)
                 if posixpath.basename(name) in _GFS_DAY:
                     gfs_meta[slide_no] = {"valid": _GFS_DAY[posixpath.basename(name)],
@@ -355,7 +355,7 @@ def build(out):
             z.writestr(n, files[n], compress_type=zipfile.ZIP_STORED if n.endswith((".gif", ".png", ".jpg", ".jpeg"))
                        else zipfile.ZIP_DEFLATED)
     tmp.replace(out / OUT_NAME)
-    note = f"{ok} pictures refreshed; {gfs_note}; thickness on {len(thick_ok)} GFS maps; peak wind {peak_note}"
+    note = f"{ok} pictures refreshed; {gfs_note}; {len(thick_ok)} GFS maps drawn; peak wind {peak_note}"
     if failed:
         note += f"; kept previous image for: {', '.join(failed[:8])}"
     return note

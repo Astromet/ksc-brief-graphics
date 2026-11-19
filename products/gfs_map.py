@@ -164,7 +164,11 @@ def render(init, fff):
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=100 * SCALE)
     plt.close(fig)
-    return buf.getvalue()
+    from PIL import Image  # 256-color PNG keeps the deck small with no visible loss
+    im = Image.open(io.BytesIO(buf.getvalue())).convert("RGB")
+    out = io.BytesIO()
+    im.quantize(colors=256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(out, "PNG", optimize=True)
+    return out.getvalue()
 
 
 def _label_thickness(ax, pc, lons, lats, th, styles, pe, spacing=480, margin=28):
