@@ -48,8 +48,8 @@ def build(out):
         # map frame edges where the map was cut, and blank the half-cut edge labels below it
         d.line((left.width, y0, left.width, y1), fill="black", width=1)
         d.line((left.width + mid.width - 1, y0, left.width + mid.width - 1, y1), fill="black", width=1)
-        d.rectangle((left.width - 2, y1 + 2, left.width + 26, H), fill="white")
-        d.rectangle((left.width + mid.width - 18, y1 + 2, left.width + mid.width + 2, H), fill="white")
+        d.rectangle((0, y1 + 2, left.width + 28, H), fill="white")
+        d.rectangle((left.width + mid.width - 22, y1 + 2, left.width + mid.width + 14, H), fill="white")
         frames.append(canvas)
     white = Image.new("RGB", frames[-1].size, "white")
     box = ImageChops.difference(frames[-1], white).point(lambda v: 255 if v > 20 else 0).getbbox()
