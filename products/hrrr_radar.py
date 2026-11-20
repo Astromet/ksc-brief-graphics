@@ -103,12 +103,14 @@ def render_panel(vals=None, lats=None, lons=None, overlay_only=False):
     ax.set_extent([x0, x1, y0, y1], crs=merc)
     ax.set_aspect("auto")
     ax.axis("off")
+    ax.spines["geo"].set_visible(False)
     pc = ccrs.PlateCarree()
     if overlay_only:
         fig.patch.set_alpha(0)
         ax.patch.set_alpha(0)
     else:
-        ax.set_facecolor(OCEAN)
+        fig.patch.set_facecolor(OCEAN)
+        ax.add_feature(cf.OCEAN.with_scale("10m"), facecolor=OCEAN, edgecolor="none", zorder=0)
         ax.add_feature(cf.LAND.with_scale("10m"), facecolor=LAND, edgecolor="none", zorder=0)
         ax.add_feature(cf.LAKES.with_scale("10m"), facecolor=OCEAN, edgecolor="none", zorder=0.5)
         if vals is not None:
@@ -117,11 +119,11 @@ def render_panel(vals=None, lats=None, lons=None, overlay_only=False):
             ax.contourf(lons, lats, vals, levels=LEVELS, cmap=cmap, norm=norm, transform=pc, zorder=1,
                         antialiased=True)
     counties = cf.NaturalEarthFeature("cultural", "admin_2_counties", "10m", facecolor="none")
-    ax.add_feature(counties, edgecolor="#4d4d4d", linewidth=1.3, linestyle=(0, (6, 4)), zorder=2)
-    ax.add_feature(cf.STATES.with_scale("10m"), edgecolor="#333333", linewidth=2.2, zorder=2.1)
-    ax.add_feature(cf.COASTLINE.with_scale("10m"), edgecolor="#222222", linewidth=2.6, zorder=2.2)
+    ax.add_feature(counties, edgecolor="#4d4d4d", linewidth=1.9, linestyle=(0, (5, 3)), zorder=2)
+    ax.add_feature(cf.STATES.with_scale("10m"), edgecolor="#333333", linewidth=3.0, zorder=2.1)
+    ax.add_feature(cf.COASTLINE.with_scale("10m"), edgecolor="#222222", linewidth=4.2, zorder=2.2)
     buf = tempfile.SpooledTemporaryFile()
-    fig.savefig(buf, format="png", dpi=dpi, transparent=overlay_only)
+    fig.savefig(buf, format="png", dpi=dpi, transparent=overlay_only, facecolor=fig.get_facecolor())
     plt.close(fig)
     buf.seek(0)
     return Image.open(buf).convert("RGBA" if overlay_only else "RGB")
@@ -144,7 +146,7 @@ def compose(panels, init, valids, fh, out):
         x = k * (pw + gap)
         lv = v.astimezone(ET)
         t1 = f"{_fmt_hour(lv)} {lv:%Z}"
-        t2 = f"{init:%H}Z run (F{f:02d}) · Valid {v:%H}Z {lv:%a %d %b}"
+        t2 = f"{init:%H}Z run (F{f:02d}) · Valid {v:%H}Z {v:%a %d %b}"
         for txt, ft, col, yb in ((t1, f1, (31, 42, 68), lab_h - 34), (t2, f2, (64, 64, 64), lab_h)):
             l, t, r, b = d.textbbox((0, 0), txt, font=ft)
             d.text((x + (pw - (r - l)) / 2 - l, yb - (b - t) - t), txt, font=ft, fill=col)
