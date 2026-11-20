@@ -27,7 +27,7 @@ FILTER = ("https://nomads.ncep.noaa.gov/cgi-bin/filter_hrrr_2d.pl?file=hrrr.t{cc
 VW, VH = 800, 1048
 CROP = (96, 84, 800, 978)
 CENTER = (-80.82, 28.50, 6.87)
-CENTER_PX = (VW / 2, VH / 2)
+CENTER_PX = (VW / 2, VH / 2 + 27)  # map center is 27 css px below page center (fit to coastlines)
 SC = 2  # render scale (the viewer screenshots were at device_scale_factor 2)
 R = 6378137.0
 
