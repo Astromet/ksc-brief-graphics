@@ -1,0 +1,24 @@
+name: Product preview
+on:
+  workflow_dispatch:
+    inputs:
+      target: {description: "module:function, e.g. tpw_backup:build", required: true}
+permissions:
+  contents: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: "${{ github.ref }}"}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -q -r requirements.txt
+      - run: python tools/preview_product.py "${{ github.event.inputs.target }}"
+      - name: Push results to the exp-out branch
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b exp-out && git add -A
+          git -c user.name=bot -c user.email=bot@users.noreply.github.com commit -qm out
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" exp-out
