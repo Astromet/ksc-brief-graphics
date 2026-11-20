@@ -15,8 +15,8 @@ X0, PX = 853.0, 2.35      # x of 0 deg longitude (Pacific-centred map, 20E at th
 Y0, PY = 233.5, 2.344     # y of the equator
 LON_W, LON_E, LAT_N, LAT_S = -100.0, 20.0, 45.0, -20.0
 SCALE = 3
-TITLE_BOX = (290, 0, 680, 21)      # "Total Precipitable Water  YYYY-MM-DD HHMM UTC"
-BAR_BOX = (903, 20, 975, 452)      # color scale with inch and mm labels
+TITLE_BOX = (270, 0, 700, 21)      # "Total Precipitable Water  YYYY-MM-DD HHMM UTC"
+BAR_BOX = (903, 18, 995, 454)      # color scale with inch and mm labels
 
 
 def _crop_box():
