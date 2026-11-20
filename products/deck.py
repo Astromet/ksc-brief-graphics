@@ -153,6 +153,14 @@ def _peak_wind(files, out):
     except Exception:  # noqa: BLE001
         pass
     pwat = "M"
+    stale_snd = False
+    try:
+        sj0 = json.loads((out / "ksc_sounding.json").read_text())
+        if sj0.get("obs_time"):
+            t_obs = dt.datetime.strptime(sj0["obs_time"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=dt.timezone.utc)
+            stale_snd = dt.datetime.now(dt.timezone.utc) - t_obs > dt.timedelta(hours=12)
+    except Exception:  # noqa: BLE001
+        pass
     try:
         sj = json.loads((out / "ksc_sounding.json").read_text())
         supd = dt.datetime.strptime(sj["updated"], "%Y-%m-%d %H:%MZ").replace(tzinfo=dt.timezone.utc)
@@ -183,6 +191,10 @@ def _peak_wind(files, out):
             xml = re.sub("(<a:t>)rl \u00b0F(</a:t>)", lambda m: f"{m.group(1)}{records['rec_lo']}{m.group(2)}", xml, count=1)
             xml = re.sub("(<a:t>)sr time(</a:t>)", lambda m: f"{m.group(1)}{records['sunrise']}{m.group(2)}", xml, count=1)
             xml = re.sub("(<a:t>)ss time(</a:t>)", lambda m: f"{m.group(1)}{records['sunset']}{m.group(2)}", xml, count=1)
+            files[name] = xml.encode("utf-8")
+        if "Stale Sounding Stamp" in xml and not stale_snd:
+            # the big red "Stale Sounding" stamp only stays when the sounding is > 12 h old
+            xml = re.sub(r'<p:sp><p:nvSpPr><p:cNvPr id="\d+" name="Stale Sounding Stamp"/>.*?</p:sp>', "", xml, flags=re.S)
             files[name] = xml.encode("utf-8")
         if "Precipitable Water =" in xml:
             xml = re.sub(r"(<a:t>)x\.xx in(</a:t>)", lambda m: f"{m.group(1)}{pwat}{m.group(2)}", xml, count=1)

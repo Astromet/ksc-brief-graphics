@@ -50,6 +50,25 @@ def _match(rows):
     return best
 
 
+def obs_time(token, now):
+    """Sounding time from the plot's GMT field (DDHHMM, e.g. 182240 = 18th 22:40Z), taken
+    as the latest such time not in the future."""
+    if not token.isdigit() or len(token) not in (5, 6):
+        return None
+    token = token.zfill(6)
+    day, hh, mm = int(token[:2]), int(token[2:4]), int(token[4:])
+    y, m = now.year, now.month
+    for _ in range(3):
+        try:
+            t = dt.datetime(y, m, day, hh, mm, tzinfo=dt.timezone.utc)
+            if t <= now + dt.timedelta(minutes=30):
+                return t
+        except ValueError:
+            pass
+        y, m = (y, m - 1) if m > 1 else (y - 1, 12)
+    return None
+
+
 def read_pw_mm(im):
     """Return PW (mm) from the last token of the black stats row under the plot."""
     im = im.convert("RGB")
@@ -111,6 +130,9 @@ def build(out):
     try:
         mm, row = read_pw_mm(im)
         result.update({"pw_mm": mm, "pw_in": round(mm / 25.4, 2), "row": row})
+        t = obs_time(row.split()[0], now_utc())
+        if t:
+            result["obs_time"] = f"{t:%Y-%m-%dT%H:%MZ}"
         note = f"PW {mm} mm = {mm / 25.4:.2f} in (row: {row})"
     except Exception as e:  # noqa: BLE001
         note = f"image saved; PW not read ({e})"
