@@ -3,7 +3,6 @@
 its date/time title, latitude/longitude labels and the inch/mm color scale."""
 import io
 
-import numpy as np
 from PIL import Image, ImageChops, ImageDraw
 
 from .common import get
@@ -15,13 +14,8 @@ SRC_W, SRC_E = -110.0, 10.0     # longitude span of the CIMSS 'natl' map
 CUT_W, CUT_E = -100.0, 0.0      # what the slide shows
 
 
-def _layout(fr):
-    """Map frame (x0, y0, x1, y1) from its black border lines."""
-    a = np.asarray(fr.convert("L")) < 40
-    H, W = a.shape
-    cols = np.nonzero(a.sum(0) > H * 0.6)[0]
-    rows = np.nonzero(a.sum(1) > W * 0.5)[0]
-    return int(cols.min()), int(rows.min()), int(cols[cols < W * 0.9].max()), int(rows.max())
+# map area of the CIMSS 'natl' frame (1000 x 470): x 54-899, y 23-446 (borders just outside)
+X0, X1, Y0, Y1 = 54, 900, 23, 447
 
 
 def build(out):
@@ -30,7 +24,7 @@ def build(out):
     for k in range(getattr(src, "n_frames", 1)):
         src.seek(k)
         raw.append(src.convert("RGB"))
-    x0, y0, x1, y1 = _layout(raw[-1])
+    x0, y0, x1, y1 = X0, Y0, X1, Y1
     px = (x1 - x0) / (SRC_E - SRC_W)
     cx0, cx1 = round(x0 + (CUT_W - SRC_W) * px), round(x0 + (CUT_E - SRC_W) * px)
     W, H = raw[0].size
