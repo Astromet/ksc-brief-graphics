@@ -1,44 +1,15 @@
-"""Backup precipitable water loop: CIMSS MIMIC-TPW2 global animation cropped to the Gulf,
-Caribbean and Atlantic basin east to Africa and south to 20S, enlarged for the slide,
-with each frame's date/time and the inch/mm color scale kept."""
+"""Backup precipitable water loop: the CIMSS MIMIC-TPW2 North Atlantic animation
+(110W-10E, equator-60N: Gulf, Caribbean and the Atlantic out to Africa), trimmed of its
+white margins, with each frame's date/time and the inch/mm color scale kept."""
 import io
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops
 
-from .common import font, get
+from .common import get
 
-SRC = ("https://tropic.ssec.wisc.edu/real-time/mtpw2/webAnims/tpw_nrl_colors/global2/"
-       "mimictpw_global2_latest.gif")
+SRC = ("https://tropic.ssec.wisc.edu/real-time/mtpw2/webAnims/tpw_nrl_colors/natl/"
+       "mimictpw_natl_latest.gif")
 OUT_NAME = "tpw_backup_loop.gif"
-# global2 frame (1000 x 470), equirectangular: x = X0 + lon_east_of_0 * PX ; y = Y0 - lat * PY
-X0, PX = 853.0, 2.35      # x of 0 deg longitude (Pacific-centred map, 20E at the left edge)
-Y0, PY = 233.5, 2.344     # y of the equator
-LON_W, LON_E, LAT_N, LAT_S = -100.0, 20.0, 45.0, -20.0
-SCALE = 3
-TITLE_BOX = (270, 0, 700, 21)      # "Total Precipitable Water  YYYY-MM-DD HHMM UTC"
-BAR_BOX = (903, 18, 995, 454)      # color scale with inch and mm labels
-
-
-def _crop_box():
-    return (round(X0 + LON_W * PX), round(Y0 - LAT_N * PY), round(X0 + LON_E * PX), round(Y0 - LAT_S * PY))
-
-
-def frame(src_rgb):
-    box = _crop_box()
-    mw, mh = (box[2] - box[0]) * SCALE, (box[3] - box[1]) * SCALE
-    m = src_rgb.crop(box).resize((mw, mh), Image.LANCZOS)
-    t = src_rgb.crop(TITLE_BOX)
-    t = t.resize((t.width * 2, t.height * 2), Image.LANCZOS)
-    b = src_rgb.crop(BAR_BOX)
-    bh = mh
-    b = b.resize((round(b.width * bh / b.height), bh), Image.LANCZOS)
-    W, H = mw + b.width + 10, mh + t.height + 6
-    out = Image.new("RGB", (W, H), "white")
-    out.paste(t, ((mw - t.width) // 2, 2))
-    out.paste(m, (0, t.height + 6))
-    out.paste(b, (mw + 10, t.height + 6))
-    ImageDraw.Draw(out).rectangle((0, t.height + 6, mw - 1, H - 1), outline="black", width=2)
-    return out
 
 
 def build(out):
@@ -46,7 +17,13 @@ def build(out):
     frames = []
     for k in range(getattr(src, "n_frames", 1)):
         src.seek(k)
-        frames.append(frame(src.convert("RGB")))
+        frames.append(src.convert("RGB"))
+    # one trim box for all frames (the white page margin around map, title and color bar)
+    white = Image.new("RGB", frames[0].size, "white")
+    box = ImageChops.difference(frames[-1], white).point(lambda v: 255 if v > 20 else 0).getbbox()
+    if box:
+        box = (max(0, box[0] - 4), max(0, box[1] - 4), min(frames[0].width, box[2] + 4), min(frames[0].height, box[3] + 4))
+        frames = [f.crop(box) for f in frames]
     pal = [f.quantize(colors=255, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE) for f in frames]
     pal[0].save(out / OUT_NAME, save_all=True, append_images=pal[1:],
                 duration=[120] * (len(pal) - 1) + [1500], loop=0, optimize=True)
