@@ -149,8 +149,8 @@ def render(init, fff):
 
     # 10-m wind barbs (kt) every 0.75 degree
     s = 3
-    ax.barbs(lons[::s, ::s], lats[::s, ::s], u[::s, ::s], v[::s, ::s], transform=pc, length=3.6,
-             linewidth=0.6, color="black", zorder=4, sizes=dict(emptybarb=0))
+    ax.barbs(lons[::s, ::s], lats[::s, ::s], u[::s, ::s], v[::s, ::s], transform=pc, length=4.3,
+             linewidth=0.75, color="black", zorder=4, sizes=dict(emptybarb=0))
 
     # 1000-500 mb thickness: 570 solid red, 540 solid blue, others red dashed (as before)
     styles = []
