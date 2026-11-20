@@ -6,7 +6,7 @@ out = Path("out"); out.mkdir(exist_ok=True)
 mod, fn = sys.argv[1].split(":")
 f = getattr(importlib.import_module(f"products.{mod}"), fn)
 try:
-    if mod in ("viewers", "hrrr_radar", "hrrr_explore", "browser_products"):
+    if mod in ("viewers", "hrrr_explore", "browser_products"):
         from playwright.sync_api import sync_playwright
         with sync_playwright() as p:
             b = p.chromium.launch(args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader",
