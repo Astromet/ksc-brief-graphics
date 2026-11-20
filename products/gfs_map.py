@@ -13,11 +13,20 @@ import tempfile
 import numpy as np
 
 from .common import get
-from .gfs_thick import AX, AY, BX, BY, LEVELS, thickness
+from .gfs_thick import LEVELS, thickness
 
 SCALE = 2
 W, H = 1280, 1024
 BAND_BOT = 647  # bottom edge of the slide's crop of this image (MAG px)
+# Map geometry in image px (1280 x 1024 frame): x = AX*lon + BX, y = BY - AY*mercator_deg(lat).
+# KSC sits at the center of the area the slide shows (x 131-1120, y 0-613); the west edge
+# (x 131) is 98.0W, just past the Texas Gulf coast. AY > AX pre-stretches the image vertically
+# so the slide (which squeezes this crop to 8.90 x 4.96 M EMU) shows the map undistorted.
+KSC_X, KSC_Y = 625.5, 306.5
+AX = 28.5014
+BX = 2924.141
+AY = 33.4603
+BY = 1304.826
 NOMADS = ("https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl?"
           "file=gfs.t{cc:02d}z.pgrb2.0p25.f{fff:03d}"
           "&lev_mean_sea_level=on&lev_10_m_above_ground=on&lev_surface=on&lev_entire_atmosphere=on"
@@ -95,6 +104,7 @@ def render(init, fff):
 
     mslp, u, v, pcp, cloud, lats, lons = _fields(init, fff)
     lat_t, lon_t, th = thickness(init, fff)
+    from .gfs_thick import _merc  # noqa: F401
 
     # extent from the MAG pixel mapping (full image, Mercator)
     lon0, lon1 = (0 - BX) / AX, (W - BX) / AX
@@ -104,6 +114,7 @@ def render(init, fff):
     fig = plt.figure(figsize=(W / 100, H / 100), dpi=100 * SCALE)
     ax = fig.add_axes([0, 0, 1, 1], projection=proj)
     ax.set_extent([lon0, lon1, lat0, lat1], crs=pc)
+    ax.set_aspect("auto")  # fill the frame (vertical pre-stretch, see AY)
     ax.set_facecolor(OCEAN)
     ax.add_feature(cfeature.LAND.with_scale("50m"), facecolor=LAND, edgecolor="none", zorder=0)
     ax.add_feature(cfeature.LAKES.with_scale("50m"), facecolor=OCEAN, edgecolor=LINE, linewidth=0.4, zorder=0.5)
