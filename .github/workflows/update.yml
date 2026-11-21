@@ -14,12 +14,32 @@ permissions:
   contents: write
   actions: write
 
-concurrency:
-  group: graphics
-  cancel-in-progress: false
-
 jobs:
+  # 6:35-7:50 AM Eastern the morning watch (sounding-watch.yml) runs the builds: its full
+  # refreshes and a quick sounding rebuild the minute SMG posts the 12Z sounding (never
+  # before ~7:10). A 15-minute scheduled build then would hold that rebuild up, so skip it.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.t.outputs.run }}
+    steps:
+      - id: t
+        env:
+          TZ: America/New_York
+        run: |
+          hm=$(date +%H%M)
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$hm" -ge 0635 ] && [ "$hm" -le 0750 ]; then
+            echo "scheduled run during the morning sounding window ($hm ET): skipped"; echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    concurrency:
+      group: graphics
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:

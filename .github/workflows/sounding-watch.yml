@@ -1,7 +1,7 @@
 name: Morning brief watch (sounding, NHC outlook, full refreshes)
 
 # The brief is used in the morning. From 6:40 to 8:05 AM Eastern this job:
-#  - runs a full refresh of every product at 6:45, 7:15 and 7:40 AM Eastern;
+#  - runs a full refresh of every product at 6:45 and 7:40 AM Eastern (nothing 7:00-7:35, so the sounding rebuild never waits);
 #  - polls the KXMR sounding plot (posted, often more than once, ~7:05-7:50) and the
 #    NHC 7-day outlook map every minute, rebuilding the sounding, NHC map and deck as
 #    soon as either changes (unless a rebuild is already queued, which will pick it up).
@@ -48,7 +48,7 @@ jobs:
           }
           # full refreshes; any already more than 5 minutes past (an earlier watch did them) are skipped
           refresh=()
-          for t in 06:45 07:15 07:40; do
+          for t in 06:45 07:40; do  # none 7:00-7:35: keep the runner free for the sounding
             ts=$(date -d "today $t" +%s)
             if [ $(( $(date +%s) - ts )) -lt 300 ]; then refresh+=("$ts"); fi
           done
