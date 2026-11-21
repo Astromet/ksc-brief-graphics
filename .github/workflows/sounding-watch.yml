@@ -52,9 +52,12 @@ jobs:
             ts=$(date -d "today $t" +%s)
             if [ $(( $(date +%s) - ts )) -lt 300 ]; then refresh+=("$ts"); fi
           done
-          last=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/ksc_sounding.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
+          # SMG rewrites its GIFs every few minutes (Last-Modified churns), so watch the image
+          # itself: a new hash means a new sounding was posted
+          imghash() { curl -fsS -A "$UA" "$URL?t=$(date +%s)" | sha1sum | cut -c1-16; }
+          last=$(imghash || true)
           nlast=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/nhc_meta.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
-          echo "published sounding: ${last:-unknown}; published NHC outlook: ${nlast:-unknown}"
+          echo "sounding image now: ${last:-unknown}; published NHC outlook: ${nlast:-unknown}"
           while [ "$(date +%s)" -lt "$end" ]; do
             now=$(date +%s); keep=()
             for ts in "${refresh[@]}"; do
@@ -63,10 +66,10 @@ jobs:
               else keep+=("$ts"); fi
             done
             refresh=("${keep[@]}")
-            lm=$(curl -fsSI -A "$UA" "$URL" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
+            lm=$(imghash || true)
             nm=$(curl -fsSI -A "$UA" "$NHC" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
             new=""
-            if [ -n "$lm" ] && [ "$lm" != "$last" ]; then new="sounding ($lm)"; last="$lm"; fi
+            if [ -n "$lm" ] && [ "$lm" != "$last" ]; then new="sounding image (posted by $(date +%H:%M) ET)"; last="$lm"; fi
             if [ -n "$nm" ] && [ "$nm" != "$nlast" ]; then new="$new NHC outlook ($nm)"; nlast="$nm"; fi
             if [ -n "$new" ]; then
               # a queued run (full refresh or an earlier rebuild) will fetch the new data when it
