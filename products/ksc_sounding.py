@@ -10,7 +10,15 @@ from PIL import Image, ImageDraw
 
 from .common import get, now_utc
 
-URL = "https://www.weather.gov/images/smg/KSCSNDG.GIF"
+# SMG posts three KXMR plots: the routine early-morning synoptic (~12Z), the routine
+# afternoon one, and the latest mission-support balloon (which only changes on launch
+# support days). The slide shows whichever was launched most recently.
+SOURCES = {
+    "Early AM synoptic": "https://www.weather.gov/images/smg/SNDG9AM.GIF",
+    "Afternoon": "https://www.weather.gov/images/smg/SNDG21PM.GIF",
+    "Mission support": "https://www.weather.gov/images/smg/KSCSNDG.GIF",
+}
+URL = SOURCES["Early AM synoptic"]
 OUT_IMG = "ksc_sounding.png"
 OUT_JSON = "ksc_sounding.json"
 
@@ -118,24 +126,46 @@ def read_pw_mm(im):
     return int(pw), " ".join(t[2] for t in tokens)
 
 
-def build(out):
-    resp = get(URL)
-    data = resp.content
-    im = Image.open(io.BytesIO(data))
+def _read(url):
+    """(image, Last-Modified, PW mm, stats row, obs time) for one SMG sounding plot."""
+    resp = get(url)
+    im = Image.open(io.BytesIO(resp.content))
     im.seek(0)
     im = im.convert("RGB")
-    im.save(out / OUT_IMG, optimize=True)
-    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}",
-              "source_modified": resp.headers.get("Last-Modified", "")}
+    mm = row = t = err = None
     try:
         mm, row = read_pw_mm(im)
-        result.update({"pw_mm": mm, "pw_in": round(mm / 25.4, 2), "row": row})
         t = obs_time(row.split()[0], now_utc())
-        if t:
-            result["obs_time"] = f"{t:%Y-%m-%dT%H:%MZ}"
-        note = f"PW {mm} mm = {mm / 25.4:.2f} in (row: {row})"
     except Exception as e:  # noqa: BLE001
-        note = f"image saved; PW not read ({e})"
+        err = e
+    return {"im": im, "modified": resp.headers.get("Last-Modified", ""), "mm": mm, "row": row,
+            "t": t, "err": err}
+
+
+def build(out):
+    got, notes = {}, []
+    for name, url in SOURCES.items():
+        try:
+            got[name] = _read(url)
+            notes.append(f"{name} {got[name]['t']:%d/%H%MZ}" if got[name]["t"] else f"{name} undated")
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"{name} failed ({type(e).__name__})")
+    if not got:
+        raise RuntimeError("no SMG sounding could be fetched; " + "; ".join(notes))
+    oldest = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
+    name = max(got, key=lambda n: (got[n]["t"] or oldest, n == "Early AM synoptic"))
+    s = got[name]
+    s["im"].save(out / OUT_IMG, optimize=True)
+    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}", "source": name, "url": SOURCES[name],
+              "source_modified": s["modified"]}
+    if s["mm"] is not None:
+        result.update({"pw_mm": s["mm"], "pw_in": round(s["mm"] / 25.4, 2), "row": s["row"]})
+        if s["t"]:
+            result["obs_time"] = f"{s['t']:%Y-%m-%dT%H:%MZ}"
+        note = f"{name}: PW {s['mm']} mm = {s['mm'] / 25.4:.2f} in (row: {s['row']})"
+    else:
+        note = f"{name}: image saved; PW not read ({s['err']})"
+    note += " [" + ", ".join(notes) + "]"
     (out / OUT_JSON).write_text(json.dumps(result, indent=1))
     try:
         star = star_chart(out)
