@@ -275,7 +275,8 @@ def build(out):
     if not got:
         raise RuntimeError("no SMG sounding could be fetched; " + "; ".join(notes))
     oldest = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
-    name = max(got, key=lambda n: (got[n]["mm"] is not None, got[n]["t"] or oldest, n == "Early AM synoptic"))
+    # newest launch wins even if its PW can't be read yet (e.g. the ~7:10 AM preliminary plot)
+    name = max(got, key=lambda n: (got[n]["t"] or oldest, got[n]["mm"] is not None, n == "Early AM synoptic"))
     s = got[name]
     s["im"].save(out / OUT_IMG, optimize=True)
     result = {"updated": f"{now:%Y-%m-%d %H:%MZ}", "source": name, "url": SOURCES[name],
