@@ -19,6 +19,8 @@ SOURCES = {
     "Mission support": "https://www.weather.gov/images/smg/KSCSNDG.GIF",
 }
 URL = SOURCES["Early AM synoptic"]
+# nominal launch hour (UTC) of the routine plots, used when the title time can't be read
+NOMINAL_HOUR = {"Early AM synoptic": 12, "Afternoon": 0}
 OUT_IMG = "ksc_sounding.png"
 OUT_JSON = "ksc_sounding.json"
 
@@ -34,6 +36,27 @@ GLYPHS = {
     "7": "#######/......#/.....#./.....#./.....#./....#../....#../...#.../...#...",
     "8": "..###../.#...#./#.....#/.#...#./..###../.#...#./#.....#/.#...#./..###..",
     "9": "..###../.#...#./#.....#/.#....#/..#####/......#/......#/.....#./..###..",
+}
+
+
+# digits of the red stats row on the routine (SNDG9AM / SNDG21PM) plots
+RED_GLYPHS = {
+    "0": ".####./#....#/#....#/#....#/#....#/#....#/#....#/#....#/.####.",
+    "1": "..#./###./..#./..#./..#./..#./..#./..#./####",
+    "2": ".####./#....#/.....#/.....#/....#./...#../..#.../.#..../######",
+    "3": ".####./#....#/.....#/.....#/...##./.....#/.....#/#....#/.####.",
+    "4": "...#.#/..#..#/..#..#/.#...#/######/.....#/.....#/.....#/.....#",
+    "5": "######/#...../#...../#####./.....#/.....#/.....#/#....#/.####.",
+    "6": ".####./#....#/#...../#...../#####./#....#/#....#/#....#/.####.",
+    "7": "######/.....#/.....#/....#./....#./....#./....#./...#../...#..",
+    "8": ".####./#....#/#....#/#....#/.####./#....#/#....#/#....#/.####.",
+    "9": ".####./#....#/#....#/#....#/.#####/.....#/.....#/.....#/.####.",
+}
+# digits of the red title line (HHMM UTC ...) on the routine plots
+TITLE_GLYPHS = {
+    "0": "..####../.#....#./#......#/#......#/#......#/#......#/#......#/#......#/#......#/.#....#./..####..",
+    "1": ".#../##../##../.#../.#../.#../.#../.#../.#../.#../####",
+    "2": "..####../.#....#./#......#/.......#/......#./.....#../....#.../...#..../..#...../.#....../########",
 }
 
 
@@ -126,45 +149,144 @@ def read_pw_mm(im):
     return int(pw), " ".join(t[2] for t in tokens)
 
 
-def _read(url):
-    """(image, Last-Modified, PW mm, stats row, obs time) for one SMG sounding plot."""
+def _red(c):
+    return c[0] > 150 and c[1] < 90 and c[2] < 90
+
+
+def _cells(im, pred, y0, y1, x0, x1):
+    px = im.load()
+    cols = [any(pred(px[i, j]) for j in range(y0, y1 + 1)) for i in range(x0, x1)]
+    out, i = [], 0
+    while i < len(cols):
+        if cols[i]:
+            s = i
+            while i < len(cols) and cols[i]:
+                i += 1
+            rows = ["".join("#" if pred(px[x, j]) else "." for x in range(x0 + s, x0 + i)) for j in range(y0, y1 + 1)]
+            out.append((x0 + s, x0 + i, rows))
+        else:
+            i += 1
+    return out
+
+
+def read_routine(im):
+    """(PW mm, stats row, title HHMM or None) from a routine SMG plot (red stats row
+    'KI LI SWI ... MIX PW CAPE HELI' under the diagram; PW in mm under the 'PW' label)."""
+    im = im.convert("RGB")
+    W, H = im.size
+    px = im.load()
+    counts = [sum(_red(px[i, j]) for i in range(W)) for j in range(H)]
+    band, j = None, int(H * 0.8)
+    while j < H:  # the stats row: the first 9-pixel band of red text below the diagram
+        if counts[j]:
+            k = j
+            while k + 1 < H and counts[k + 1]:
+                k += 1
+            if k - j + 1 == 9:
+                band = (j, k)
+                break
+            j = k + 1
+        else:
+            j += 1
+    if not band:
+        raise RuntimeError("red stats row not found")
+    lookup = {v: d for d, v in RED_GLYPHS.items()}
+    toks = []
+    for s, e, rows in _cells(im, _red, band[0], band[1], 0, W):
+        if e - s <= 2:
+            ch = "."
+        elif sum("#" in r for r in rows) == 1:
+            ch = "-"
+        else:
+            ch = lookup.get("/".join(rows), "?")
+        if toks and s - toks[-1][1] <= 7:
+            toks[-1] = [toks[-1][0], e, toks[-1][2] + ch]
+        else:
+            toks.append([s, e, ch])
+    if len(toks) < 10:
+        raise RuntimeError(f"stats row has {len(toks)} values")
+    pw = toks[9][2]  # KI LI SWI TTI CVT FMAX ThE EL MIX PW CAPE HELI
+    try:
+        mm = round(float(pw))
+    except ValueError:
+        raise RuntimeError(f"PW unreadable: {pw!r} (row: {' '.join(t[2] for t in toks)})") from None
+    if not 3 <= mm <= 90:
+        raise RuntimeError(f"PW out of range: {pw}")
+    hhmm = None
+    tl = {v: d for d, v in TITLE_GLYPHS.items()}
+    head = _cells(im, _red, 7, 17, 0, 60)
+    digits = "".join(tl.get("/".join(r), "?") for _, _, r in head)
+    if len(digits) == 4 and digits.isdigit() and int(digits[:2]) < 24 and int(digits[2:]) < 60:
+        hhmm = digits
+    return mm, " ".join(t[2] for t in toks), hhmm
+
+
+def _launch_before(t, hour):
+    """Latest hour:00Z at or before t."""
+    c = t.replace(hour=hour, minute=0, second=0, microsecond=0)
+    return c if c <= t else c - dt.timedelta(days=1)
+
+
+def _read(name, url, seen, now):
+    """Fetch one SMG plot; returns its image, PW and launch time. Routine plots carry no
+    machine-readable date, so their launch time is the nominal (or title) hour on or
+    before the time we first saw that exact image (tracked by hash in `seen`)."""
+    import hashlib
     resp = get(url)
     im = Image.open(io.BytesIO(resp.content))
     im.seek(0)
     im = im.convert("RGB")
-    mm = row = t = err = None
+    h = hashlib.sha1(im.tobytes()).hexdigest()[:16]
+    prev = seen.get(name) or {}
+    first = now
+    if prev.get("hash") == h and prev.get("first_seen"):
+        first = dt.datetime.strptime(prev["first_seen"], "%Y-%m-%dT%H:%MZ").replace(tzinfo=dt.timezone.utc)
+    r = {"im": im, "modified": resp.headers.get("Last-Modified", ""), "mm": None, "row": None, "t": None,
+         "err": None, "seen": {"hash": h, "first_seen": f"{first:%Y-%m-%dT%H:%MZ}"}}
     try:
-        mm, row = read_pw_mm(im)
-        t = obs_time(row.split()[0], now_utc())
+        if name in NOMINAL_HOUR:
+            r["mm"], r["row"], hhmm = read_routine(im)
+            hour = int(hhmm[:2]) if hhmm else NOMINAL_HOUR[name]
+            r["t"] = _launch_before(first + dt.timedelta(hours=2), hour)  # may post just before the hour
+            if hhmm:
+                r["t"] = r["t"].replace(minute=int(hhmm[2:]))
+        else:
+            r["mm"], r["row"] = read_pw_mm(im)
+            r["t"] = obs_time(r["row"].split()[0], now)
     except Exception as e:  # noqa: BLE001
-        err = e
-    return {"im": im, "modified": resp.headers.get("Last-Modified", ""), "mm": mm, "row": row,
-            "t": t, "err": err}
+        r["err"] = e
+    return r
 
 
 def build(out):
+    now = now_utc()
+    try:
+        seen = json.loads((out / OUT_JSON).read_text()).get("seen", {})
+    except Exception:  # noqa: BLE001
+        seen = {}
     got, notes = {}, []
     for name, url in SOURCES.items():
         try:
-            got[name] = _read(url)
-            notes.append(f"{name} {got[name]['t']:%d/%H%MZ}" if got[name]["t"] else f"{name} undated")
+            got[name] = _read(name, url, seen, now)
+            g = got[name]
+            notes.append(f"{name} {g['t']:%d/%H%MZ}" if g["t"] else f"{name} undated ({g['err']})")
         except Exception as e:  # noqa: BLE001
             notes.append(f"{name} failed ({type(e).__name__})")
     if not got:
         raise RuntimeError("no SMG sounding could be fetched; " + "; ".join(notes))
     oldest = dt.datetime(1970, 1, 1, tzinfo=dt.timezone.utc)
-    name = max(got, key=lambda n: (got[n]["t"] or oldest, n == "Early AM synoptic"))
+    name = max(got, key=lambda n: (got[n]["mm"] is not None, got[n]["t"] or oldest, n == "Early AM synoptic"))
     s = got[name]
     s["im"].save(out / OUT_IMG, optimize=True)
-    result = {"updated": f"{now_utc():%Y-%m-%d %H:%MZ}", "source": name, "url": SOURCES[name],
-              "source_modified": s["modified"]}
+    result = {"updated": f"{now:%Y-%m-%d %H:%MZ}", "source": name, "url": SOURCES[name],
+              "source_modified": s["modified"], "seen": {n: g["seen"] for n, g in got.items()}}
     if s["mm"] is not None:
         result.update({"pw_mm": s["mm"], "pw_in": round(s["mm"] / 25.4, 2), "row": s["row"]})
-        if s["t"]:
-            result["obs_time"] = f"{s['t']:%Y-%m-%dT%H:%MZ}"
-        note = f"{name}: PW {s['mm']} mm = {s['mm'] / 25.4:.2f} in (row: {s['row']})"
+        note = f"{name}: PW {s['mm']} mm = {s['mm'] / 25.4:.2f} in"
     else:
         note = f"{name}: image saved; PW not read ({s['err']})"
+    if s["t"]:
+        result["obs_time"] = f"{s['t']:%Y-%m-%dT%H:%MZ}"
     note += " [" + ", ".join(notes) + "]"
     (out / OUT_JSON).write_text(json.dumps(result, indent=1))
     try:
@@ -173,7 +295,6 @@ def build(out):
     except Exception as e:  # noqa: BLE001
         note += f"; climo star failed ({e})"
     return note
-
 
 def _star(cx, cy, r_out, r_in):
     pts = []
@@ -213,13 +334,3 @@ def star_chart(out):
     im.save(out / "snd_pw_climo.png", optimize=True)
     return note
 
-
-def dump(out):
-    """Debug: save all three SMG plots and what was read from each."""
-    lines = []
-    for name, url in SOURCES.items():
-        s = _read(url)
-        s["im"].save(out / (url.rsplit("/", 1)[-1].split(".")[0] + ".png"))
-        lines.append(f"{name}: {s['modified']} t={s['t']} mm={s['mm']} row={s['row']} err={s['err']}")
-    (out / "dump.txt").write_text("\n".join(lines))
-    return "\n".join(lines)
