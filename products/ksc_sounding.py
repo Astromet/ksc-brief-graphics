@@ -212,3 +212,14 @@ def star_chart(out):
         note = f"no star ({type(e).__name__}: {e})"
     im.save(out / "snd_pw_climo.png", optimize=True)
     return note
+
+
+def dump(out):
+    """Debug: save all three SMG plots and what was read from each."""
+    lines = []
+    for name, url in SOURCES.items():
+        s = _read(url)
+        s["im"].save(out / (url.rsplit("/", 1)[-1].split(".")[0] + ".png"))
+        lines.append(f"{name}: {s['modified']} t={s['t']} mm={s['mm']} row={s['row']} err={s['err']}")
+    (out / "dump.txt").write_text("\n".join(lines))
+    return "\n".join(lines)
