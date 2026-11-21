@@ -221,6 +221,48 @@ def read_routine(im):
     return mm, " ".join(t[2] for t in toks), hhmm
 
 
+def solid_dewpoint(im, color=(0, 120, 0), gap=14):
+    """Routine SMG plots draw the dewpoint as a dashed bright-green line; recolor it dark
+    green and bridge each dash to its nearest neighbor so it reads as a solid line."""
+    import numpy as np
+    from scipy import ndimage
+    a = np.array(im.convert("RGB"))
+    m = (a[..., 0] < 60) & (a[..., 1] > 200) & (a[..., 2] < 60)
+    lab, n = ndimage.label(m, structure=np.ones((3, 3)))
+    ends = []
+    for k in range(1, n + 1):
+        ys, xs = np.nonzero(lab == k)
+        pts = np.stack([xs, ys], 1)
+        d = ((pts[:, None] - pts[None]) ** 2).sum(-1)
+        i, j = np.unravel_index(d.argmax(), d.shape)
+        ends += [(k, tuple(pts[i])), (k, tuple(pts[j]))]
+    out = im.convert("RGB").copy()
+    a2 = np.array(out); a2[m] = color; out = Image.fromarray(a2)
+    dr = ImageDraw.Draw(out)
+    # link each endpoint to the nearest endpoint of another dash
+    used = set()
+    pairs = []
+    for i, (ki, pi) in enumerate(ends):
+        for j, (kj, pj) in enumerate(ends):
+            if j > i and ki != kj:
+                pairs.append((np.hypot(pi[0]-pj[0], pi[1]-pj[1]), i, j))
+    pairs.sort()
+    linked = set()
+    for dist, i, j in pairs:
+        if dist > gap: break
+        if i in used or j in used: continue
+        ki, kj = ends[i][0], ends[j][0]
+        if (min(ki,kj), max(ki,kj)) in linked: continue
+        used |= {i, j}; linked.add((min(ki,kj), max(ki,kj)))
+        dr.line([ends[i][1], ends[j][1]], fill=color, width=2)
+    # thicken the whole line to 2 px
+    a3 = np.array(out)
+    g = np.all(a3 == color, -1)
+    g2 = ndimage.binary_dilation(g, structure=np.array([[0,0,0],[0,1,1],[0,1,0]]))
+    a3[g2 & ~g & (np.abs(a3.astype(int) - [255,0,0]).sum(-1) > 30)] = color
+    return Image.fromarray(a3)
+
+
 def _launch_before(t, hour):
     """Latest hour:00Z at or before t."""
     c = t.replace(hour=hour, minute=0, second=0, microsecond=0)
@@ -278,7 +320,13 @@ def build(out):
     # newest launch wins even if its PW can't be read yet (e.g. the ~7:10 AM preliminary plot)
     name = max(got, key=lambda n: (got[n]["t"] or oldest, got[n]["mm"] is not None, n == "Early AM synoptic"))
     s = got[name]
-    s["im"].save(out / OUT_IMG, optimize=True)
+    img = s["im"]
+    if name in NOMINAL_HOUR:
+        try:
+            img = solid_dewpoint(img)
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"dewpoint restyle failed ({e})")
+    img.save(out / OUT_IMG, optimize=True)
     result = {"updated": f"{now:%Y-%m-%d %H:%MZ}", "source": name, "url": SOURCES[name],
               "source_modified": s["modified"], "seen": {n: g["seen"] for n, g in got.items()}}
     if s["mm"] is not None:
