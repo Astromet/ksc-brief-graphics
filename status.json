@@ -1,0 +1,87 @@
+{
+  "satellite": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "25 frames 1741-1941Z"
+  },
+  "nws_lead": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "https://www.weather.gov/images/mlb/graphicast/2.png"
+  },
+  "precip_ltg_climo": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "x=1120 for 2026-11-21"
+  },
+  "tc_activity": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "x=682 for 2026-11-21"
+  },
+  "tc_origin": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "https://www.nhc.noaa.gov/climo/images/nov_21_30.png"
+  },
+  "meteograms": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "0 KSC launches + gfs + ecmwf"
+  },
+  "sounding_climo": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "Nov 21 (12Z): 0.43 0.41 0.64 0.85 1.12 1.15 1.41 1.64 1.93 1.89"
+  },
+  "tpw": {
+    "ok": true,
+    "updated": "2026-11-21 19:53Z",
+    "note": "TPWViewer 36 frames; Latest MIMIC 1900 UTC 21 Nov, under an hour old. HRRR 18Z tail to 0700 UTC 22 Nov"
+  },
+  "refs": {
+    "ok": true,
+    "updated": "2026-11-21 19:54Z",
+    "note": "cycle 21/12Z F06; data responses {200: 4648, 504: 72}; ['retry RRFS Ctl -12h', 'error: Error retrieving SPC REFS member RRFS Ctl -12h F03: Unexpected response status 504 ', 'error: Error retrieving SPC REFS member RRFS Ctl -12h F60: data are missing']"
+  },
+  "deck": {
+    "ok": true,
+    "updated": "2026-11-21 20:04Z",
+    "note": "42 pictures refreshed; GFS 21/12Z run; 8 GFS maps drawn; peak wind 21 KT, temps 78/66 \u00b0F, rain 0.00, PW 1.42 in, MLB normal 76/59 \u00b0F, records 86 \u00b0F (1962) / 34 \u00b0F (1937), sun 6:49 AM EST-5:28 PM EST"
+  },
+  "nhc_7day": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "10% (low)"
+  },
+  "ksc_peak_wind": {
+    "ok": true,
+    "updated": "2026-11-21 19:51Z",
+    "note": "21 KT at 0313 NE  SW 394 ft 11/21/2026 14:00:00 (10469 reports); max/min 78/66 F"
+  },
+  "ksc_rain": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "0.00\" at gauge 1 (21 KSC gauges reporting)"
+  },
+  "ksc_sounding": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "Early AM synoptic: PW 36 mm = 1.42 in [Early AM synoptic 21/1200Z, Afternoon 21/0000Z, Mission support 18/2240Z]; climo chart star at 1.42 in"
+  },
+  "mlb_normals": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "normal 76/59 F (CLI issued 229 AM EST SAT NOV 21 2026)"
+  },
+  "tpw_backup": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "38 frames, 852x470; map x 54-900, cut 124-830"
+  },
+  "hrrr_cref": {
+    "ok": true,
+    "updated": "2026-11-21 19:52Z",
+    "note": "HRRR 21/16Z run, F00/03/06/09"
+  }
+}
