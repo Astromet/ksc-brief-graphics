@@ -9,6 +9,8 @@ def run(out):
         "spc_gif": f"https://www.spc.noaa.gov/exper/soundings/{t:%y%m%d}12_OBS/XMR.gif",
         "spc_list": f"https://www.spc.noaa.gov/exper/soundings/{t:%y%m%d}12_OBS/",
         "iem": f"https://mesonet.agron.iastate.edu/json/raob.py?ts={d}1200&station=KXMR",
+        "iem_yday12": "https://mesonet.agron.iastate.edu/json/raob.py?ts=202611211200&station=KXMR",
+        "iem_00z": f"https://mesonet.agron.iastate.edu/json/raob.py?ts={d}0000&station=KXMR",
         "uwyo": f"https://weather.uwyo.edu/wsgi/sounding?datetime={t:%Y-%m-%d}%2012:00:00&id=74794&src=UNKNOWN&type=TEXT:LIST",
         "cod": "https://weather.cod.edu/analysis/raob/",
     }
