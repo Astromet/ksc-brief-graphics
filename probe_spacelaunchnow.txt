@@ -1,0 +1,1217 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+        
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-42643564-5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-42643564-5');
+</script>
+        
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Caleb Jones">
+    <!-- iOS Smart App Banner. Safari renders it natively; other browsers ignore it,
+         so it is sent unconditionally and stays cache-safe. -->
+    <meta name="apple-itunes-app" content="app-id=1399715731">
+    <link rel="shortcut icon" href="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/favicon.ico">
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-Bx4pytHkyTDy3aJKjGkGoHPt3tvv6zlwwjc3iqN7ktaiEMLDPqLSZYts2OjKcBx1" crossorigin="anonymous">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/css/material-kit.min.css"  >
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" href="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/css/spacelaunchnow.min.css" >
+    <link rel="stylesheet" href="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/css/video-facade.css">
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/js/video-facade.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Ads: 960961949 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-960961949"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-960961949');
+    </script>
+    <!--   Core JS Files   -->
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/core/jquery.min.js" type="text/javascript"></script>
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/core/popper.min.js" type="text/javascript"></script>
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/core/bootstrap-material-design.min.js" type="text/javascript"></script>
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/plugins/moment.min.js"></script>
+    <!--	Plugin for the Datepicker, full documentation here: https://github.com/Eonasdan/bootstrap-datetimepicker -->
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/plugins/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+    <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/plugins/nouislider.min.js" type="text/javascript"></script>
+    <!-- Control Center for Now Ui Kit: parallax effects, scripts for the example pages etc -->
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/material-kit.min.js" type="text/javascript"></script>
+    <!-- Converts server-rendered UTC launch times to the viewer's local timezone -->
+    <script src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/material_kit/js/launch-time.js" type="text/javascript" defer></script>
+    <style>
+        .sln-time-local,
+        .sln-time-base {
+            display: block;
+        }
+
+        .sln-time-secondary {
+            font-size: 0.85em;
+            opacity: 0.7;
+        }
+    </style>
+    
+
+    <meta property="fb:app_id" content="746774215504127"/>
+    <meta property="og:type" content="website"/>
+    
+        <link rel="canonical" href="https://spacelaunchnow.app/launch/upcoming/florida">
+        <title>Space Launch Now - Florida Launch Schedule</title>
+        <meta name="title" content="Space Launch Now - Florida Launch Schedule">
+        <meta property="og:title" content="Space Launch Now - Florida Launch Schedule"/>
+        <meta name="description"
+              content="A spaceflight launch schedule for Cape Canaveral and Kennedy Space Center in Florida - tracking the latest developments in spaceflight, check back often for the next rocket launch.">
+        <meta property="og:description"
+              content="A spaceflight launch schedule for Cape Canaveral and Kennedy Space Center in Florida - tracking the latest developments in spaceflight, check back often for the next rocket launch."/>
+        <meta property="og:url" content="https://spacelaunchnow.app/launch/upcoming/florida"/>
+    
+
+
+    <meta property="og:image" content="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/social.png"/>
+    <meta property="og:image:width" content="3000"/>
+    <meta property="og:image:height" content="2000"/>
+
+    <meta name="robots" content="index, follow"/>
+
+    <meta property="og:type" content="article"/>
+    <meta property="og:site_name" content="Space Launch Now"/>
+
+    <meta name="twitter:card" content="summary_large_image"/>
+
+    <meta name="twitter:description"
+          content="A spaceflight launch schedule for Cape Canaveral/Kennedy Space Center, Vandenberg AFB, Wallops Island, SpaceX, Blue Origin, ULA, Rocket Lab and much more - tracking the latest developments in spaceflight, check back often for launch schedule changes.">
+    <meta name="twitter:image" content="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/social.png">
+    <meta name="twitter:site" content="@SpaceLaunchNow">
+    <meta name="twitter:creator" content="@SpaceLaunchNow">
+
+
+
+</head>
+
+<body class="index-page sidebar-collapse" id="page-top">
+
+
+    <nav class="navbar bg-primary  fixed-top  navbar-expand-lg">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="/"><b>Space Launch Now</b></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse">
+
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item ">
+                    <a class="nav-link js-scroll-trigger"
+                       href="/">Home</a>
+                </li>
+                <li class="nav-item dropdown  active ">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        Launches
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item "
+                           href="/launch/upcoming/">Upcoming Launches</a>
+                        <a class="dropdown-item "
+                           href="/launch/previous/">Previous Launches</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item "
+                           href="/launch/upcoming/spacex">SpaceX</a>
+                        <a class="dropdown-item  active "
+                           href="/launch/upcoming/florida">Florida</a>
+                        <a class="dropdown-item "
+                           href="/launch/upcoming/vandenberg">Vandenberg</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item " href="/launch/">Launch
+                            Database</a>
+                    </div>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link js-scroll-trigger"
+                       href="/starship/">Starship</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link js-scroll-trigger"
+                       href="/event/">Events</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link js-scroll-trigger "
+                       href="/astronaut/">Astronauts</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link js-scroll-trigger"
+                       href="/vehicle/">Vehicles</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"><i
+                            class="fab fa-android"></i> Android</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://itunes.apple.com/us/app/space-launch-now/id1399715731"><i
+                            class="fab fa-apple"></i> iOS</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+    
+    <!-- Page Content -->
+    <div class="container" style="margin-top:100px; margin-bottom: 16px">
+        <div class="row">
+            <!-- Post Content Column -->
+            <div class="col-lg-9 col-md-12 col-xl-9">
+                
+                    <div class="container">
+                        <nav aria-label="breadcrumb" role="navigation">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/launch/">Launches</a></li>
+                                <li class="breadcrumb-item"><a href="/launch/upcoming/">Upcoming</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Florida</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <h1 class="title">Florida Launch Schedule</h1>
+                    <h2>Upcoming launches out of Kennedy Space Center and Cape Canaveral AFB</h2>
+                
+
+                
+
+                <div class="container">
+                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                    <!-- Web - Horizontal -->
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-pub-9824528399164059"
+                         data-ad-slot="6503993784"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                    <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+
+                
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Falcon 9 Block 5 | Cygnus CRS-2 NG-25</h4>
+                SpaceX
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-11-29T15:50:00+00:00" data-time-parts="hm"><span class="sln-time-base">November 29, 2026 - 15:50 UTC</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>Go for Launch</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">This is the 25th flight of the Orbital ATK&#x27;s uncrewed resupply spacecraft Cygnus and its 24th flight to the International Space Station under the Commercial Resupply Services contract with NASA.</p>
+        
+        <span class="badge badge-pill badge-success">Low Earth Orbit</span>
+        
+        
+            
+                
+                    <span class="badge badge-pill badge-info"> B1096 - Flight Proven
+                        (
+                            ) </span>
+                    <span class="badge badge-pill badge-primary">Landing Zone 40</span>
+                
+            
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/falcon-9-block-5-cygnus-crs-2-ng-25/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/falcon-9-block-5-cygnus-crs-2-ng-25/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/placeholder.jpg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Unknown | Owlet-01</h4>
+                Unknown
+                | Unknown<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">Telescope satellite for Scout Space, a startup specializing in space domain awareness through in-space observation.</p>
+        
+        <span class="badge badge-pill badge-success">Low Earth Orbit</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/unknown-owlet-01/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/unknown-owlet-01/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/vulcan_image_20240107162928.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Vulcan | USSF-57</h4>
+                United Launch Alliance
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">First of three Next Generation Overhead Persistent Infrared geostationary satellites designed for missile warning.</p>
+        
+        <span class="badge badge-pill badge-success">Geostationary Transfer Orbit</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/vulcan-ussf-57/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/vulcan-ussf-57/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Falcon 9 Block 5 | SDA Tranche 2 Tracking Layer B</h4>
+                SpaceX
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">Classified mission launched by the Space Development Agency (SDA) for Tranche 2 Tracking Layer.</p>
+        
+        <span class="badge badge-pill badge-success">Polar Orbit</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/falcon-9-block-5-sda-tranche-2-tracking-layer-b/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/falcon-9-block-5-sda-tranche-2-tracking-layer-b/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/vulcan_image_20240107162928.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Vulcan | SILENTBARKER 2/NROL-118</h4>
+                United Launch Alliance
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">Space domain awareness mission for the US Department of Defense.</p>
+        
+        <span class="badge badge-pill badge-success">Geostationary Orbit</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/vulcan-silentbarker-2nrol-118/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/vulcan-silentbarker-2nrol-118/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/vulcan_image_20240107162928.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Vulcan | USSF-23</h4>
+                United Launch Alliance
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">Classified payload for the US Space Force.</p>
+        
+        <span class="badge badge-pill badge-success">Unknown</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/vulcan-ussf-23/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/vulcan-ussf-23/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/terran2520r25_image_20220719142358.png"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Terran R | Mars Lander</h4>
+                Relativity Space
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">Impulse Space&#x27;s Mars Lander is designed to support research and development needed for human exploration of Mars.</p>
+        
+        <span class="badge badge-pill badge-success">Mars Orbit</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/terran-r-mars-lander/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/terran-r-mars-lander/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/falcon_9_image_20230807133459.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Falcon 9 Block 5 | VICTUS SURGO</h4>
+                SpaceX
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">A new Tactically Responsive Space (TacRS) mission by the United States Space Force Space Systems Command to deliver responsive space delivery. The mission consists of an Impulse Space Mira orbital transfer vehicle that will operate in Geosynchronous Transfer Orbit (GTO), which would be transferred from Low Earth Orbit (LEO) on an Impulse Space Helios kick stage. A Helios rideshare payload will also be delivered to GEO.</p>
+        
+        <span class="badge badge-pill badge-success">Low Earth Orbit</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/falcon-9-block-5-victus-surgo/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/falcon-9-block-5-victus-surgo/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/terran_r_image_20220912002151.png"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Terran R | Intelsat-1</h4>
+                Relativity Space
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">First mission part of a multi-year, multi-launch agreement signed between Intelsat and Relativity Space in 2023.</p>
+        
+        <span class="badge badge-pill badge-success">Unknown</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/terran-r-intelsat-1/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/terran-r-intelsat-1/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                        
+
+
+<div class="card text-left" style="margin-top: 75px">
+    <div class="card-header  card-header-info  p-2">
+        <div class="row">
+            <div class="col-md-4 text-center" style="height: 150px">
+                
+                    <img class="img-raised rounded-circle img-fluid text-center"
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/media/images/vulcan_image_20240107162928.jpeg"
+                         style="overflow: hidden;width: 150px;height: 150px;object-fit: cover;padding:1px;border:1px solid #cccccc;">
+                
+            </div>
+            <div class="col-md-8 text-md-left text-center">
+                <h4 class="card-title">Vulcan | NROL-64</h4>
+                United Launch Alliance
+                | United States of America<br>
+                Cape Canaveral SFS, FL, USA<br>
+                <i><time class="sln-time" datetime="2026-12-31T00:00:00+00:00"><span class="sln-time-base">NET 2026</span></time>
+</i>
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-5">
+        
+            <h5 class="card-text"><b>Status: </b>To Be Determined</h5>
+        
+        
+            <h5 class="card-text"><b>Mission: </b></h5>
+            <p class="card-text">Classified payload for the US National Reconnaissance Office</p>
+        
+        <span class="badge badge-pill badge-success">Unknown</span>
+        
+        
+        <hr/>
+        <row>
+            <a class="btn btn-primary" href="/launch/vulcan-nrol-64/">Explore</a>
+            <a data-site class="btn btn-danger"
+               href="http://www.facebook.com/sharer.php?u=https://spacelaunchnow.app/launch/vulcan-nrol-64/"
+               target="_blank">Share</a>
+        </row>
+    </div>
+</div>
+                    
+                    <div class="text-center mx-auto">
+                        <nav aria-label="...">
+                            
+                                <ul class="pagination justify-content-center">
+                                    
+                                        <li class="page-item disabled"><span>Previous</span></li>
+                                    
+                                    
+                                    
+                                        
+                                            
+                                                <li class="page-item active"><span class="page-link">1 <span
+                                                        class="sr-only">(current)</span></span>
+                                                </li>
+                                            
+                                        
+                                    
+                                        
+                                            
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page=2&q=FL">2</a>
+                                                </li>
+                                            
+                                        
+                                    
+                                        
+                                            
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page=3&q=FL">3</a>
+                                                </li>
+                                            
+                                        
+                                    
+                                        
+                                            
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page=4&q=FL">4</a>
+                                                </li>
+                                            
+                                        
+                                    
+                                        
+                                            
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page=5&q=FL">5</a>
+                                                </li>
+                                            
+                                        
+                                    
+                                        
+                                            
+                                                <li class="page-item"><a class="page-link"
+                                                                         href="?page=6&q=FL">6</a>
+                                                </li>
+                                            
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                        
+                                    
+                                    
+                                        
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?page=205&q=FL">Last</a>
+                                        
+                                        <li class="page-item"><a class="page-link"
+                                                                 href="?page=2&q=FL">Next</a>
+                                        </li>
+                                    
+                                </ul>
+                            
+                        </nav>
+                    </div>
+                
+
+            </div>
+
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-lg-3 col-md-12 col-xl-3">
+                <!-- Categories Widget -->
+                <div class="card">
+    <div class="card-header card-header-danger mb-1"><a class="text-white" href="/launch/previous/">Recent Launches</a></div>
+        <hr>
+        
+            <a href="/launch/falcon-9-block-5-nrol-136/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Falcon 9</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 day, 8 hours ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">NROL-136</h6>
+                    <small class="mb-2"><b>Space Launch Complex 4E - Vandenberg SFB, CA, USA</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">Fifteenth batch of satellites for a reconnaissance satellite constellation built by SpaceX and Northrop Grumman for the National Reconnaissance Offic…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=NFIjyRFTPao'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/falcon-9-block-5-ussf-317/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Falcon 9</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">2 days, 16 hours ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">USSF-317</h6>
+                    <small class="mb-2"><b>Space Launch Complex 4E - Vandenberg SFB, CA, USA</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">A classified mission for the United States Space Force. It is possibly a batch of classified LEO satellites based on SpaceX’s Starshield satellite bu…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=NejEgXnJzBM'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/long-march-8a-satnet-leo-group-30/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Long March 8A</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">3 days, 9 hours ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">SatNet LEO Group 30</h6>
+                    <small class="mb-2"><b>Commercial LC-1 - Wenchang Space Launch Site, People&#x27;s Republic of China</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">A batch of 9 Low Earth Orbit communication satellites for the Chinese state owned SatNet constellation operated by the China Satellite Network Group.…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=dUxmQvNnQEI'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/long-march-2d-shijian-24/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Long March 2D</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">4 days, 22 hours ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">Shijian 24</h6>
+                    <small class="mb-2"><b>Launch Complex 9 - Taiyuan Satellite Launch Center, People&#x27;s Republic of China</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">Experimental Chinese satellite of unknown purposes.</p>
+                
+            </div>
+            
+            <hr>
+        
+            <a href="/launch/vulcan-vc6l-amazon-leo-lv-01/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Vulcan VC6L</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-danger
+                                                    ">Failure</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 week, 1 day ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">Amazon Leo (LV-01)</h6>
+                    <small class="mb-2"><b>Space Launch Complex 41 - Cape Canaveral SFS, FL, USA</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">Amazon Leo, formerly known as Project Kuiper, is a mega constellation of satellites in Low Earth Orbit that will offer broadband internet access, thi…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=qM5A1ZO9oh8'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/electron-the-mountain-god-rises-iqps-launch-10/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Electron</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 week, 2 days ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">The Mountain God Rises (iQPS Launch 10)</h6>
+                    <small class="mb-2"><b>Rocket Lab Launch Complex 1A - Rocket Lab Launch Complex 1, Mahia Peninsula, New Zealand</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">Synthetic aperture radar Earth observation satellite for Japanese Earth imaging company iQPS.</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=kyR8kZ2XlhQ'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/soyuz-21bfregat-m-mka-kinosputnik-koen-and-others/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Soyuz 2.1b/Fregat-M</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 week, 2 days ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">MKA Kinosputnik, KOEN and others</h6>
+                    <small class="mb-2"><b>Cosmodrome Site 1S - Vostochny Cosmodrome, Siberia, Russian Federation</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">Share-ride of multiple satellites, including dual-use optical Earth observation satellites and drone-guiding satellites:
+
+* MKA Kinosputnik
+* KOEN…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=ATvKzYP7CPw'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/starship-starlink-group-31-2-starship-flight-15/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Starship</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 week, 2 days ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">Starlink Group 31-2 (Starship Flight 15)</h6>
+                    <small class="mb-2"><b>Orbital Launch Pad 2 - SpaceX Starbase, TX, USA</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">15th test flight of the two-stage Starship launch vehicle and 4th flight of Starship V3. Second Starship flight to deploy satellites (a group of Star…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=yJXW9lkNWuk'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/falcon-9-block-5-ussf-627/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Falcon 9</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 week, 4 days ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">USSF-627</h6>
+                    <small class="mb-2"><b>Space Launch Complex 4E - Vandenberg SFB, CA, USA</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">A classified mission for the United States Space Force. It is possibly a batch of classified LEO satellites based on SpaceX’s Starshield satellite bu…</p>
+                
+            </div>
+            
+                <div class="container text-center mt-1">
+                    <button onclick="location.href='https://www.youtube.com/watch?v=rq7SLpK5vlY'" class="btn btn-social btn-sm btn-block btn-youtube">
+                        <i class="fab fa-youtube"></i> Watch
+                    </button>
+                </div>
+            
+            <hr>
+        
+            <a href="/launch/long-march-2d-cas-pathfinder-1/"
+               class="list-group-item list-group-item-action flex-column align-items-start"
+               style="padding-top: 0;padding-bottom: 0">
+                <div class="d-flex w-100 justify-content-between mb-2 py-0 my-0">
+
+                    <div class="my-auto">
+                        <h5 class="title" style="margin: 0px;">Long March 2D</h5>
+                    </div>
+                    <div class="my-auto">
+                        <span
+                                class="badge badge-pill m-2  badge-success
+                                                    ">Success</span>
+                    </div>
+                </div>
+                <small class="text-muted text-center">1 week, 5 days ago</small>
+            </a>
+            <div class="list-group-item py-0 my-0">
+                
+                    <h6 class="mb-0">CAS Pathfinder-1</h6>
+                    <small class="mb-2"><b>Launch Area 94 (SLS-2 / 603) - Jiuquan Satellite Launch Center, People&#x27;s Republic of China</b></small>
+                    <p class="caption" style="margin-bottom: 0;padding-bottom: 0">The Chinese Academy of Science (CAS)&#x27; Pathfinder-1 satellites is built for in-orbit validation of critical technologies for the upcoming main mission…</p>
+                
+            </div>
+            
+            <hr>
+        
+    <div class="container mb-2">
+        <button onclick="location.href='/launch/upcoming'" class="btn btn-block btn-primary">View Upcoming Launches
+        </button>
+        <button onclick="location.href='/launch/'" class="btn btn-block btn-info">View Launch Database</button>
+    </div>
+</div>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Web - Square -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9824528399164059"
+     data-ad-slot="8772606898"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+<iframe src="https://discordapp.com/widget?id=380226438584074242&theme=dark"
+        width="100%" height="500"
+        allowtransparency="true"
+        frameborder="0"></iframe>
+            </div>
+        </div>
+        <div class="container">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Space Launch Now -->
+            <ins class="adsbygoogle"
+                 style="display:block; margin-top:16px; margin-bottom:16px;"
+                 data-ad-client="ca-pub-9824528399164059"
+                 data-ad-slot="8772606898"
+                 data-ad-format="auto"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+    
+<div class="call-to-action bg-dark">
+    <div class="container text-center">
+        <div class="row text-center my-5 py-5">
+            <div class="col-md-6 mb-3 text-center">
+                <a href='https://play.google.com/store/apps/details?id=me.calebjones.spacelaunchnow&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+                    <img alt='Get it on Google Play'
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/button/google.png"/></a>
+            </div>
+            <div class="col-md-6 mb-3 text-center">
+                <a href='https://itunes.apple.com/us/app/space-launch-now/id1399715731'>
+                    <img alt='Get it on the App Store'
+                         src="https://thespacedevs-prod.nyc3.digitaloceanspaces.com/static/home/img/button/apple.png"/></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  End Modal -->
+<footer class="footer" data-background-color="black">
+    <div class="container">
+        <nav class="float-left">
+            <ul>
+                <li>
+                    <a href="/about/">
+                        About Us
+                    </a>
+                </li>
+                <li>
+                    <a href="/site/privacy">
+                        Privacy Policy
+                    </a>
+                </li>
+                <li>
+                    <a href="/site/tos">
+                        Terms of Use
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.facebook.com/spacelaunchnow/" class="facebook"><i
+                            class="fab fa-facebook"></i></a>
+                </li>
+                <li>
+                    <a href="https://www.instagram.com/spacelaunchnow/" class="twitter"><i class="fab fa-instagram"></i></a>
+                </li>
+                <li>
+                    <a href="https://discord.gg/WVfzEDW" class="twitter"><i class="fab fa-discord"></i></a>
+                </li>
+                <li>
+                    <a href="https://github.com/itscalebjones" class="twitter"><i class="fab fa-github"></i></a>
+                </li>
+                <li>
+                    <a href="https://www.patreon.com/spacelaunchnow" class="twitter"><i class="fab fa-patreon"></i></a>
+                </li>
+            </ul>
+        </nav>
+        <div class="copyright float-right">
+            <p>© 2019 Copyright</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    $(document).ready(function () {
+        //init DateTimePickers
+        materialKit.initFormExtendedDatetimepickers();
+
+        // Sliders Init
+        materialKit.initSliders();
+    });
+
+
+    function scrollToDownload() {
+        if ($('.section-download').length != 0) {
+            $("html, body").animate({
+                scrollTop: $('.section-download').offset().top
+            }, 1000);
+        }
+    }
+
+
+</script>
+</body>
+</html>
+

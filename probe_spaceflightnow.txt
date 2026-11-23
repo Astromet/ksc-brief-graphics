@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#07182e" />
+<!-- Home Screen web app: draw the page under a see-through status bar (white text), so the top bar's own colour fills it and its
+     contents sit below it (sfn-chrome.css pads .site-topbar by the safe area). Without this iOS adds a light bar whose fade covers the top bar. -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Spaceflight Now" />
+<script>/* Running as a Home Screen web app: html.is-webapp (sfn-chrome.css gives the page the top bar's colour behind the status bar). */
+(function(){try{if(navigator.standalone===true||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)){var r=document.documentElement;r.className+=" is-webapp";
+/* html.at-top while the page is at the very top: the top bar is pinned there so iOS skips its status bar fade until you scroll. */
+var f=function(){r.classList.toggle("at-top",(window.scrollY||0)<=0);};f();window.addEventListener("scroll",f,{passive:true});}}catch(e){}})();</script>
+<script>/* Theme before first paint (no light flash): reader's choice from the settings gear (assets/js/settings.js), default = light.
+   theme-color = the top bar's colour in that theme, so the phone's status bar area (Home Screen web app, Safari's tinting) blends into it. */
+(function(){try{var t=localStorage.getItem("sfn-theme-v1")||"light";var d=t==="dark"||(t!=="light"&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.setAttribute("data-theme",d?"dark":"light");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",d?"#0c0d0f":"#07182e");}catch(e){}})();</script>
+<script>/* Big-logo header (sfn-chrome.css html.hdr-alt, assets/js/header-alt.js): on unless this browser chose ?hdr=std; ?hdr=alt turns it back on. */
+(function(){try{var q=/[?&]hdr=(alt|std)/.exec(location.search);if(q)localStorage.setItem("sfn_hdr",q[1]);if(localStorage.getItem("sfn_hdr")!=="std")document.documentElement.classList.add("hdr-alt");}catch(e){document.documentElement.classList.add("hdr-alt");}})();</script>
+<script>/* Page width on big screens: off unless the reader chose Wide / Wider in the settings gear (assets/js/settings.js; sfn-chrome.css html[data-wide]). */
+(function(){try{var w=localStorage.getItem("sfn-wide-v1");if(w==="wide"||w==="wider")document.documentElement.setAttribute("data-wide",w);}catch(e){}})();</script>
+<script>/* Text size: Standard unless the reader chose Large / Larger in the settings gear (assets/js/settings.js; sfn-chrome.css html[data-text]). */
+(function(){try{var t=localStorage.getItem("sfn-text-v1");if(t==="large"||t==="larger")document.documentElement.setAttribute("data-text",t);}catch(e){}})();</script>
+<title>Launch Schedule — Spaceflight Now</title>
+<meta name='robots' content='max-image-preview:large' />
+<script>document.cookie="sfn_sv=5e37c3b0f5681ee083aa1dbe;path=/;max-age=2592000;SameSite=Lax;Secure";</script>
+<link rel="icon" type="image/png" sizes="32x32" href="https://spaceflightnow.com/new/assets/images/icons/live/icon-32.png?v=1793717812" />
+<link rel="icon" type="image/png" sizes="16x16" href="https://spaceflightnow.com/new/assets/images/icons/live/icon-16.png?v=1793717812" />
+<link rel="icon" type="image/png" sizes="96x96" href="https://spaceflightnow.com/new/assets/images/icons/live/icon-96.png?v=1793737036" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://spaceflightnow.com/new/assets/images/icons/live/icon-180.png?v=1793717812" />
+<link rel="manifest" href="https://spaceflightnow.com/new/assets/manifest.webmanifest?v=1793717812" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script>try{if(localStorage.getItem('sfnNextLaunch3'))document.documentElement.className+=' nl-cached'}catch(e){}</script>
+<link rel='dns-prefetch' href='//use.typekit.net' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel="alternate" type="application/rss+xml" title="Spaceflight Now &raquo; Feed" href="https://spaceflightnow.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Spaceflight Now &raquo; Comments Feed" href="https://spaceflightnow.com/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://spaceflightnow.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fspaceflightnow.com%2Flaunch-schedule%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://spaceflightnow.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fspaceflightnow.com%2Flaunch-schedule%2F&#038;format=xml" />
+<meta name="description" content="Every orbital launch on the books, from spaceports worldwide, updated around the clock. Times show in your local zone — use the clock menu to switch. Open any mission for details, or check the Completed tab for launches back to 2004." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Spaceflight Now" />
+<meta property="og:title" content="Launch Schedule — Spaceflight Now" />
+<meta property="og:description" content="Every orbital launch on the books, from spaceports worldwide, updated around the clock. Times show in your local zone — use the clock menu to switch. Open any mission for details, or check the Completed tab for launches back to 2004." />
+<meta property="og:url" content="https://spaceflightnow.com/launch-schedule/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Launch Schedule — Spaceflight Now" />
+<meta name="twitter:description" content="Every orbital launch on the books, from spaceports worldwide, updated around the clock. Times show in your local zone — use the clock menu to switch. Open any mission for details, or check the Completed tab for launches back to 2004." />
+<meta property="og:image" content="https://spaceflightnow.com/new/assets/images/favicon-512.png" />
+<meta property="og:image:width" content="864" />
+<meta property="og:image:height" content="864" />
+<meta property="og:image:alt" content="Spaceflight Now" />
+<meta name="twitter:image" content="https://spaceflightnow.com/new/assets/images/favicon-512.png" />
+<link rel="canonical" href="https://spaceflightnow.com/launch-schedule/" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='sfn-typekit-css' href='https://use.typekit.net/ria2zho.css' media='all' />
+<link rel='stylesheet' id='sfn-hanken-css' href='https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&#038;display=swap' media='all' />
+<link rel='stylesheet' id='sfn-chrome-css' href='https://spaceflightnow.com/new/assets/css/sfn-chrome.css?ver=1795045527' media='all' />
+<link rel='stylesheet' id='sfn-tour-css' href='https://spaceflightnow.com/new/assets/css/sfn-tour.css?ver=1793717812' media='all' />
+<link rel='stylesheet' id='sfn-rails-css' href='https://spaceflightnow.com/new/assets/css/sfn-rails.css?ver=1793717812' media='all' />
+<link rel='stylesheet' id='sfn-launch-css' href='https://spaceflightnow.com/new/assets/css/sfn-launch.css?ver=1794362533' media='all' />
+<link rel="https://api.w.org/" href="https://spaceflightnow.com/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://spaceflightnow.com/wp-json/wp/v2/pages/60869" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://spaceflightnow.com/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.1.5" />
+<link rel='shortlink' href='https://spaceflightnow.com/?p=60869' />
+<script type="text/javascript">
+  (function(c) {
+    var script = document.createElement("script");
+    script.src = "https://js.memberful.com/embed.js";
+    script.onload = function() { Memberful.setup(c) };
+    document.head.appendChild(script);
+  })({
+    site: ["https:\/\/spaceflightnow.memberful.com"]  });
+</script>
+<meta name="viewport" content="width=device-width, minimum-scale=1" /><style type="text/css">
+.mh-navigation li:hover, .mh-navigation ul li:hover > ul, .mh-main-nav-wrap, .mh-main-nav, .mh-social-nav li a:hover, .entry-tags li, .mh-slider-caption, .mh-widget-layout8 .mh-widget-title .mh-footer-widget-title-inner, .mh-widget-col-1 .mh-slider-caption, .mh-widget-col-1 .mh-posts-lineup-caption, .mh-carousel-layout1, .mh-spotlight-widget, .mh-social-widget li a, .mh-author-bio-widget, .mh-footer-widget .mh-tab-comment-excerpt, .mh-nip-item:hover .mh-nip-overlay, .mh-widget .tagcloud a, .mh-footer-widget .tagcloud a, .mh-footer, .mh-copyright-wrap, input[type=submit]:hover, #infinite-handle span:hover { background: #828282; }
+.mh-extra-nav-bg { background: rgba(130, 130, 130, 0.2); }
+.mh-slider-caption, .mh-posts-stacked-title, .mh-posts-lineup-caption { background: #828282; background: rgba(130, 130, 130, 0.8); }
+@media screen and (max-width: 900px) { #mh-mobile .mh-slider-caption, #mh-mobile .mh-posts-lineup-caption { background: rgba(130, 130, 130, 1); } }
+.slicknav_menu, .slicknav_nav ul, #mh-mobile .mh-footer-widget .mh-posts-stacked-overlay { border-color: #828282; }
+.mh-copyright, .mh-copyright a { color: #fff; }
+.mh-widget-layout4 .mh-widget-title { background: #990000; background: rgba(153, 0, 0, 0.6); }
+.mh-preheader, .mh-wide-layout .mh-subheader, .mh-ticker-title, .mh-main-nav li:hover, .mh-footer-nav, .slicknav_menu, .slicknav_btn, .slicknav_nav .slicknav_item:hover, .slicknav_nav a:hover, .mh-back-to-top, .mh-subheading, .entry-tags .fa, .entry-tags li:hover, .mh-widget-layout2 .mh-widget-title, .mh-widget-layout4 .mh-widget-title-inner, .mh-widget-layout4 .mh-footer-widget-title, .mh-widget-layout5 .mh-widget-title-inner, .mh-widget-layout6 .mh-widget-title, #mh-mobile .flex-control-paging li a.flex-active, .mh-image-caption, .mh-carousel-layout1 .mh-carousel-caption, .mh-tab-button.active, .mh-tab-button.active:hover, .mh-footer-widget .mh-tab-button.active, .mh-social-widget li:hover a, .mh-footer-widget .mh-social-widget li a, .mh-footer-widget .mh-author-bio-widget, .tagcloud a:hover, .mh-widget .tagcloud a:hover, .mh-footer-widget .tagcloud a:hover, .mh-posts-stacked-item .mh-meta, .page-numbers:hover, .mh-loop-pagination .current, .mh-comments-pagination .current, .pagelink, a:hover .pagelink, input[type=submit], #infinite-handle span { background: #990000; }
+.mh-main-nav-wrap .slicknav_nav ul, blockquote, .mh-widget-layout1 .mh-widget-title, .mh-widget-layout3 .mh-widget-title, .mh-widget-layout5 .mh-widget-title, .mh-widget-layout8 .mh-widget-title:after, #mh-mobile .mh-slider-caption, .mh-carousel-layout1, .mh-spotlight-widget, .mh-author-bio-widget, .mh-author-bio-title, .mh-author-bio-image-frame, .mh-video-widget, .mh-tab-buttons, textarea:hover, input[type=text]:hover, input[type=email]:hover, input[type=tel]:hover, input[type=url]:hover { border-color: #990000; }
+.mh-header-tagline, .mh-dropcap, .mh-carousel-layout1 .flex-direction-nav a, .mh-carousel-layout2 .mh-carousel-caption, .mh-posts-digest-small-category, .mh-posts-lineup-more, .bypostauthor .fn:after, .mh-comment-list .comment-reply-link:before, #respond #cancel-comment-reply-link:before { color: #990000; }
+.entry-content a { color: #000000; }
+a:hover, .entry-content a:hover, #respond a:hover, #respond #cancel-comment-reply-link:hover, #respond .logged-in-as a:hover, .mh-comment-list .comment-meta a:hover, .mh-ping-list .mh-ping-item a:hover, .mh-meta a:hover, .mh-breadcrumb a:hover, .mh-tabbed-widget a:hover { color: #cea45a; }
+</style>
+</head>
+<body class="wp-singular page-template-default page page-id-60869 wp-theme-mh-magazine wp-child-theme-mh-magazine-child sfnp-launch-schedule mh-boxed-layout mh-right-sb mh-loop-layout1 mh-widget-layout1 mh-loop-hide-caption">
+<div class="webapp-fade" aria-hidden="true"></div>
+<div class="site-topbar">
+<div class="site-topbar-inner">
+<span class="topbar-now"><span class="date" id="site-date">&mdash;</span><span class="topbar-clock" id="topbar-clock">--:-- --</span></span>
+<div class="topbar-links">
+<a href="https://spaceflightnow.com/about/">About</a>
+<a href="https://spaceflightnow.com/contact/">Contact</a>
+<a href="https://spaceflightnow.com/donate/">Donate</a><a href="https://shop.spaceflightnow.com/" target="_blank" rel="noopener">Shop</a><a href="https://spaceflightnow.com/subscribe/">Subscribe</a>
+<span class="topbar-social">
+<a href="https://x.com/SpaceflightNow" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23.3 22h-6.8l-5.3-7-6.1 7H2l7.8-8.9L1.5 2h6.9l4.8 6.4L18.9 2zm-1.2 18h1.9L7.4 4H5.4l12.3 16z"/></svg></a>
+<a href="https://www.youtube.com/@SpaceflightNowVideo" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.7-.5-5.4a2.8 2.8 0 0 0-2-2C18.7 4 12 4 12 4s-6.7 0-8.5.6a2.8 2.8 0 0 0-2 2C1 8.3 1 12 1 12s0 3.7.5 5.4a2.8 2.8 0 0 0 2 2C5.3 20 12 20 12 20s6.7 0 8.5-.6a2.8 2.8 0 0 0 2-2C23 15.7 23 12 23 12zM10 15.5v-7l6 3.5-6 3.5z"/></svg></a><a href="https://www.facebook.com/spaceflightnow" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94z"/></svg></a><a href="https://bsky.app/profile/spaceflightnow.com" target="_blank" rel="noopener" aria-label="Bluesky"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.5C10.6 7.9 7.2 4.9 4.5 3.4 2.9 2.5 2 3 2 4.3v9.4c0 1 .5 1.7 1.5 2 2.9 1 6.2 3.5 7.6 5.4.6.8 1.7.8 2.3 0 1.4-1.9 4.7-4.4 7.6-5.4 1-.3 1.5-1 1.5-2V4.3c0-1.3-.9-1.8-2.5-.9-2.7 1.5-6.1 4.5-7.5 7.1z"/></svg></a><a href="https://www.threads.com/@spaceflightnow" target="_blank" rel="noopener" aria-label="Threads"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 11.2c-.1-3.6-2.1-5.7-5.6-5.7-2.1 0-3.9.9-5 2.6l1.7 1.2c.8-1.1 1.9-1.7 3.2-1.7 1.9 0 3 .9 3.3 2.7-.8-.1-1.7-.2-2.6-.1-2.6.1-4.7 1.5-4.6 3.8.1 1.9 1.8 3.3 4.1 3.2 2-.1 3.2-1 3.9-2.2.5.6.7 1.4.7 2.3h2.1c0-1.6-.5-2.9-1.4-3.9.1-.7.2-1.4.2-2.2zm-4.9 4.9c-1.2.1-1.9-.5-1.9-1.2 0-.9.9-1.5 2.4-1.6.4 0 .8 0 1.3.1.1-.1.1 2.3-1.8 2.7z"/></svg></a><a href="https://www.instagram.com/spaceflightnow/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-2.7 0-3.1 0-4.1.1-1 .1-1.7.2-2.3.5-.6.2-1.2.6-1.7 1.1-.5.5-.9 1.1-1.1 1.7-.2.6-.4 1.3-.5 2.3C2.2 8.9 2.2 9.3 2.2 12s0 3.1.1 4.1c.1 1 .2 1.7.5 2.3.2.6.6 1.2 1.1 1.7.5.5 1.1.9 1.7 1.1.6.2 1.3.4 2.3.5 1 .1 1.4.1 4.1.1s3.1 0 4.1-.1c1-.1 1.7-.2 2.3-.5.6-.2 1.2-.6 1.7-1.1.5-.5.9-1.1 1.1-1.7.2-.6.4-1.3.5-2.3.1-1 .1-1.4.1-4.1s0-3.1-.1-4.1c-.1-1-.2-1.7-.5-2.3-.2-.6-.6-1.2-1.1-1.7-.5-.5-1.1-.9-1.7-1.1-.6-.2-1.3-.4-2.3-.5C15.1 2 14.7 2 12 2zm0 1.8c2.6 0 2.9 0 4 .1.9.1 1.5.2 1.8.3.5.2.8.4 1.1.7.3.3.5.6.7 1.1.1.3.3.9.3 1.8.1 1.1.1 1.4.1 4s0 2.9-.1 4c-.1.9-.2 1.5-.3 1.8-.2.5-.4.8-.7 1.1-.3.3-.6.5-1.1.7-.3.1-.9.3-1.8.3-1.1.1-1.4.1-4 .1s-2.9 0-4-.1c-.9-.1-1.5-.2-1.8-.3-.5-.2-.8-.4-1.1-.7-.3-.3-.5-.6-.7-1.1-.1-.3-.3-.9-.3-1.8-.1-1.1-.1-1.4-.1-4s0-2.9.1-4c.1-.9.2-1.5.3-1.8.2-.5.4-.8.7-1.1.3-.3.6-.5 1.1-.7.3-.1.9-.3 1.8-.3 1.1-.1 1.4-.1 4-.1zm0 3.1a5.1 5.1 0 1 0 0 10.2 5.1 5.1 0 0 0 0-10.2zm0 8.4a3.3 3.3 0 1 1 0-6.6 3.3 3.3 0 0 1 0 6.6zm5.3-8.6a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/></svg></a><a href="https://www.twitch.tv/spaceflightnow" target="_blank" rel="noopener" aria-label="Twitch"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.3 2 3 5.7v14.6h5v2h2.7l2-2H16l4.7-4.7V2H4.3zm14.7 12.7-3 3h-3.7l-2 2v-2H6.3V3.7h12.7v11z"/><path d="M15.7 7h1.7v5h-1.7zM11 7h1.7v5H11z"/></svg></a>
+</span>
+</div>
+</div>
+</div>
+<header class="site-header">
+<div class="site-header-inner">
+<a href="https://spaceflightnow.com/" class="logo-lockup" aria-label="Spaceflight Now home">
+<span class="logo-fallback">
+<span class="wm" style="font-size:clamp(1.5rem,7.5vw,2.25rem);font-weight:700">Spaceflight Now</span>
+<span class="tag" style="font-weight:600;letter-spacing:clamp(2.5px,0.85vw,4px);font-size:clamp(6.5px,2.1vw,10px);text-decoration-line:none">The best source for space news</span>
+</span>
+</a>
+<nav class="site-nav" aria-label="Primary">
+<div class="site-nav-inner">
+<form class="nav-search-form" action="https://spaceflightnow.com/news-archive/" method="get" role="search">
+<input type="search" name="q" placeholder="Search the SFN archives" aria-label="Search the Spaceflight Now archives">
+<button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+</form>
+<a href="https://spaceflightnow.com/">Home</a>
+<a href="https://spaceflightnow.com/launch-schedule/" class="is-active" aria-current="page">Launch Schedule</a>
+<a href="https://spaceflightnow.com/mission-reports/">Mission Reports</a>
+<div class="members-picker members-split"><a href="https://spaceflightnow.com/members/" id="members-link">Members</a><button type="button" class="nav-caret" id="members-trigger" aria-haspopup="true" aria-expanded="false" aria-label="Members: sign in or sign up"></button><div class="members-menu" id="members-menu" role="menu"></div></div>
+<a href="https://spaceflightnow.com/news-archive/">News Archive</a>
+<div class="members-picker live-picker"><a href="https://spaceflightnow.com/live/" class="has-caret" id="live-trigger" aria-haspopup="true" aria-expanded="false">Live</a><div class="members-menu" id="live-menu" role="menu"><a href="https://spaceflightnow.com/live/" role="menuitem">Live Blog</a><a href="https://spaceflightnow.com/tracker/" role="menuitem">Orbital Tracker</a></div></div>
+<a href="https://spaceflightnow.com/about/" class="util-link">About</a>
+<a href="https://spaceflightnow.com/contact/" class="util-link">Contact</a>
+<a href="https://shop.spaceflightnow.com/" target="_blank" rel="noopener" class="util-link">Shop</a>
+<a href="https://spaceflightnow.com/donate/" class="util-link">Donate</a>
+<a href="https://spaceflightnow.com/subscribe/" class="util-link">Subscribe</a>
+</div>
+</nav>
+<button class="nav-toggle" type="button" aria-label="Open menu and search" aria-expanded="false">
+<span class="nav-toggle-search" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4" stroke-linecap="round"/></svg></span>
+<svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+<svg class="icon-close" hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+</button>
+</div>
+</header>
+<header class="masthead">
+<div class="masthead-inner">
+<form class="masthead-search" action="https://spaceflightnow.com/news-archive/" method="get" role="search">
+<input type="search" name="q" placeholder="Search the Spaceflight Now archives" aria-label="Search the Spaceflight Now archives">
+<button type="submit" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg></button>
+</form>
+<a href="https://spaceflightnow.com/launch-schedule/" class="masthead-next-launch" id="masthead-next-launch" aria-label="View the full launch schedule">
+<div class="mnl-info">
+<div class="mnl-top"><span class="mnl-label">Next Launch</span><span class="mnl-mission" id="mnl-date">&nbsp;</span></div>
+<span class="mnl-meta"><b id="mnl-mission">Loading…</b><span id="mnl-site-sep"> · </span><span id="mnl-site"></span></span>
+</div>
+<div class="mnl-cd" id="mnl-cd">
+<div class="mnl-cd-seg"><div class="mnl-cd-cells" id="mnl-cd-d"></div><span class="mnl-cd-label">Days</span></div>
+<div class="mnl-cd-colon">:</div>
+<div class="mnl-cd-seg"><div class="mnl-cd-cells" id="mnl-cd-h"></div><span class="mnl-cd-label">Hrs</span></div>
+<div class="mnl-cd-colon">:</div>
+<div class="mnl-cd-seg"><div class="mnl-cd-cells" id="mnl-cd-m"></div><span class="mnl-cd-label">Min</span></div>
+<div class="mnl-cd-colon">:</div>
+<div class="mnl-cd-seg"><div class="mnl-cd-cells" id="mnl-cd-s"></div><span class="mnl-cd-label">Sec</span></div>
+</div>
+<span class="mnl-cta">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</span>
+</a>
+</div>
+</header>
+<script src="https://spaceflightnow.com/new/assets/js/header-alt.js?ver=1793127046"></script>
+<main class="shell">
+  <h1 class="sr-only">Launch Schedule</h1>
+    <!-- HERO: NEXT LAUNCH -->
+    <section class="hero" id="hero" aria-label="Next launch" hidden>
+      <div class="hero-top">
+        <span class="hero-kicker">Next Launch</span>
+      </div>
+      <div class="hero-body">
+        <div class="hero-title ga-name">
+          <div class="hero-provider" id="hero-provider">—</div>
+          <h2 class="hero-name" id="hero-name">—</h2>
+          <div class="hero-aka" id="hero-aka" hidden></div>
+        </div>
+        <div class="cd ga-clock" id="hero-cd"></div>
+        <div class="hero-weather-below ga-weather" id="hero-weather-below"></div>
+        <div class="hero-facts ga-facts" id="hero-facts"></div>
+        <div class="cd-liftoff ga-date" id="hero-liftoff"></div>
+      </div>
+      <button class="hero-toggle" id="hero-toggle" type="button" aria-expanded="false" aria-controls="hero-drawer">
+        <span class="hero-toggle-label">Mission details</span>
+        <svg class="hero-toggle-caret" width="14" height="9" viewBox="0 0 14 9" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1.5 1.5l5.5 5.5 5.5-5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="hero-drawer" id="hero-drawer" role="region" aria-label="Mission details"></div>
+    </section>
+
+    <div class="intro">
+      <p>Every orbital launch on the books, from spaceports worldwide, updated around the clock. Times show in your local zone — use the clock menu to switch. Open any mission for details, or check the Completed tab for launches back to 2004.</p>
+      <div class="legend">
+        <span><b>NET</b> : no earlier than</span>
+        <span><b>TBD</b> : to be determined</span>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="main">
+        <div class="controls">
+          <div class="section-head">
+            <div class="view-toggle" id="view-toggle" role="tablist" aria-label="Launch list view">
+              <button class="view-toggle-btn is-active" type="button" role="tab" aria-selected="true" data-view="upcoming">Upcoming</button>
+              <button class="view-toggle-btn" type="button" role="tab" aria-selected="false" data-view="completed">Completed</button>
+            </div>
+            <span class="section-rule"></span>
+            <span class="section-count" id="results-label"></span>
+          </div>
+          <div class="toolbar">
+            <label class="search-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg>
+              <input id="search-input" type="search" placeholder="Search mission, provider, vehicle, status, site…" aria-label="Search launches" />
+            </label>
+          </div>
+          <div class="period-bar" id="period-bar-top" hidden></div>
+          <div class="meta-line" id="meta-line">
+            <div><span id="feed-status"></span><span id="updated-label"></span></div>
+            <button class="refresh" id="refresh-button" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Refresh
+            </button>
+          </div>
+          <div class="status-note" id="status-note" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="list-controls">
+        <div class="tz-bar" id="tz-bar">
+          <span class="tz-bar-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="tz-bar-label-full">All dates &amp; times in <b id="tz-current">your local time</b></span>
+            <b class="tz-bar-label-short" id="tz-current-short">EDT</b>
+          </span>
+          <div class="tz-picker" id="tz-picker">
+            <button class="tz-trigger" id="tz-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="Choose display timezone">
+              <span id="tz-trigger-label">Your time</span>
+              <svg viewBox="0 0 10 6" width="11" height="7" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="tz-menu" id="tz-menu" role="listbox" aria-label="Display timezone" hidden></div>
+          </div>
+        </div>
+        <div class="tz-bar from-bar" id="from-bar" hidden>
+          <span class="tz-bar-label" id="from-bar-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18l-7 8v6l-4-2v-4z" stroke-linejoin="round"/></svg>
+            <span>Launches from</span>
+          </span>
+          <div class="tz-picker" id="from-picker"></div>
+        </div>
+        </div>
+
+        <p class="follow-note" id="follow-note" role="status" hidden></p>
+
+        <ul class="launch-list" id="launch-list">
+          <li class="empty">Loading launch schedule…</li>
+        </ul>
+
+        <div class="period-bar" id="period-bar" hidden></div>
+      </div>
+
+      <aside class="rail" aria-label="Sidebar">
+                <div class="rail-view" data-rail-view="upcoming"><section class="rail-set rail-set--stories"><h2 class="rail-title">Mission Reports</h2><ul class="related-list"><li class="related-item"><a href="https://spaceflightnow.com/2026/11/21/live-coverage-spacex-to-launch-intelligence-gathering-satellites-for-the-national-reconnaissance-office-3/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/04/20260414-Falcon-9-File-300x169.jpg')" aria-label="SpaceX launches intelligence-gathering satellites for the National Reconnaissance Office"></a><div><a href="https://spaceflightnow.com/2026/11/21/live-coverage-spacex-to-launch-intelligence-gathering-satellites-for-the-national-reconnaissance-office-3/">SpaceX launches intelligence-gathering satellites for the National Reconnaissance Office</a><time datetime="2026-11-21T16:50:51+00:00" data-sfn-time="date">November 21, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/11/19/live-coverage-spacex-to-launch-classified-payload-for-the-u-s-space-force-2/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/11/20261121_USSF-317_streak-300x200.jpeg')" aria-label="SpaceX launches satellites for the U.S. Space Force&#8217;s data network constellation"></a><div><a href="https://spaceflightnow.com/2026/11/19/live-coverage-spacex-to-launch-classified-payload-for-the-u-s-space-force-2/">SpaceX launches satellites for the U.S. Space Force&#8217;s data network constellation</a><time datetime="2026-11-19T23:51:47+00:00" data-sfn-time="date">November 19, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/10/30/live-coverage-spacex-to-close-out-october-with-halloween-eve-falcon-9-launch/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/10/20261031-Starlink-15-18-Launch-300x169.jpg')" aria-label="SpaceX closes out October with 700th Falcon 9 launch to date"></a><div><a href="https://spaceflightnow.com/2026/10/30/live-coverage-spacex-to-close-out-october-with-halloween-eve-falcon-9-launch/">SpaceX closes out October with 700th Falcon 9 launch to date</a><time datetime="2026-10-30T22:46:02+00:00" data-sfn-time="date">October 30, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/10/29/spacewalking-astronauts-unfurl-upgraded-solar-array-to-boost-space-station-power/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/10/20261029-IROSA-unfurls-300x254.jpg')" aria-label="Spacewalking astronauts unfurl upgraded solar array to boost space station power"></a><div><a href="https://spaceflightnow.com/2026/10/29/spacewalking-astronauts-unfurl-upgraded-solar-array-to-boost-space-station-power/">Spacewalking astronauts unfurl upgraded solar array to boost space station power</a><time datetime="2026-10-29T21:57:22+00:00" data-sfn-time="date">October 29, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/10/28/united-launch-alliance-announces-mid-november-return-to-flight-for-vulcan-rocket/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/10/20261028-Vulcan-Leo-1-Fairing-Feature-300x169.jpg')" aria-label="United Launch Alliance announces mid-November return to flight for Vulcan rocket"></a><div><a href="https://spaceflightnow.com/2026/10/28/united-launch-alliance-announces-mid-november-return-to-flight-for-vulcan-rocket/">United Launch Alliance announces mid-November return to flight for Vulcan rocket</a><time datetime="2026-10-28T22:46:41+00:00" data-sfn-time="date">October 28, 2026</time></div></li></ul></section><section class="rail-set rail-set--videos"><h2 class="rail-title">Featured Videos</h2><ul class="video-list"><li class="video-item"><a href="https://www.youtube.com/watch?v=7x582dlbPLo" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/7x582dlbPLo/mqdefault.jpg')" aria-label="SpaceX caught its 1st Starship"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://www.youtube.com/watch?v=7x582dlbPLo" target="_blank" rel="noopener" class="title">SpaceX caught its 1st Starship</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/6zsziM7mGII?si=KvXsKNsl3vildfbT" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/6zsziM7mGII/mqdefault.jpg')" aria-label="Blue Origin, SpaceX race to become 1st to carry NASA astronauts to the Moon"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/6zsziM7mGII?si=KvXsKNsl3vildfbT" target="_blank" rel="noopener" class="title">Blue Origin, SpaceX race to become 1st to carry NASA astronauts to the Moon</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/TkJFZ0epQp8" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/TkJFZ0epQp8/mqdefault.jpg')" aria-label="Artemis Debrief: Interview with NASA&#039;s Amit Kshatriya"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/TkJFZ0epQp8" target="_blank" rel="noopener" class="title">Artemis Debrief: Interview with NASA&#039;s Amit Kshatriya</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/qvWl-fRl1Rw" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/qvWl-fRl1Rw/mqdefault.jpg')" aria-label="4K Replay: SpaceX Falcon 9 lights up Florida dawn sky on Bandwagon-5 launch"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/qvWl-fRl1Rw" target="_blank" rel="noopener" class="title">4K Replay: SpaceX Falcon 9 lights up Florida dawn sky on Bandwagon-5 launch</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/lFPQdi3dvnY" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/lFPQdi3dvnY/mqdefault.jpg')" aria-label="How Blue Origin plans to dramatically increase its New Glenn rocket launch rate"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/lFPQdi3dvnY" target="_blank" rel="noopener" class="title">How Blue Origin plans to dramatically increase its New Glenn rocket launch rate</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/qIAZqrsJGfQ" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/qIAZqrsJGfQ/mqdefault.jpg')" aria-label="4K Replay: Falcon 9 creates a giant “Space Jellyfish” in the sky"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/qIAZqrsJGfQ" target="_blank" rel="noopener" class="title">4K Replay: Falcon 9 creates a giant “Space Jellyfish” in the sky</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/z4g_QwAh1EQ" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/z4g_QwAh1EQ/mqdefault.jpg')" aria-label="How Blue Origin recovers from launch pad disaster"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/z4g_QwAh1EQ" target="_blank" rel="noopener" class="title">How Blue Origin recovers from launch pad disaster</a><span class="meta">Watch on YouTube</span></div></li></ul></section></div>
+        <div class="rail-view" data-rail-view="completed" hidden><section class="rail-set rail-set--stories"><h2 class="rail-title">Mission Reports</h2><ul class="related-list"><li class="related-item"><a href="https://spaceflightnow.com/2026/11/21/live-coverage-spacex-to-launch-intelligence-gathering-satellites-for-the-national-reconnaissance-office-3/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/04/20260414-Falcon-9-File-300x169.jpg')" aria-label="SpaceX launches intelligence-gathering satellites for the National Reconnaissance Office"></a><div><a href="https://spaceflightnow.com/2026/11/21/live-coverage-spacex-to-launch-intelligence-gathering-satellites-for-the-national-reconnaissance-office-3/">SpaceX launches intelligence-gathering satellites for the National Reconnaissance Office</a><time datetime="2026-11-21T16:50:51+00:00" data-sfn-time="date">November 21, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/11/19/live-coverage-spacex-to-launch-classified-payload-for-the-u-s-space-force-2/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/11/20261121_USSF-317_streak-300x200.jpeg')" aria-label="SpaceX launches satellites for the U.S. Space Force&#8217;s data network constellation"></a><div><a href="https://spaceflightnow.com/2026/11/19/live-coverage-spacex-to-launch-classified-payload-for-the-u-s-space-force-2/">SpaceX launches satellites for the U.S. Space Force&#8217;s data network constellation</a><time datetime="2026-11-19T23:51:47+00:00" data-sfn-time="date">November 19, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/10/30/live-coverage-spacex-to-close-out-october-with-halloween-eve-falcon-9-launch/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/10/20261031-Starlink-15-18-Launch-300x169.jpg')" aria-label="SpaceX closes out October with 700th Falcon 9 launch to date"></a><div><a href="https://spaceflightnow.com/2026/10/30/live-coverage-spacex-to-close-out-october-with-halloween-eve-falcon-9-launch/">SpaceX closes out October with 700th Falcon 9 launch to date</a><time datetime="2026-10-30T22:46:02+00:00" data-sfn-time="date">October 30, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/10/29/spacewalking-astronauts-unfurl-upgraded-solar-array-to-boost-space-station-power/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/10/20261029-IROSA-unfurls-300x254.jpg')" aria-label="Spacewalking astronauts unfurl upgraded solar array to boost space station power"></a><div><a href="https://spaceflightnow.com/2026/10/29/spacewalking-astronauts-unfurl-upgraded-solar-array-to-boost-space-station-power/">Spacewalking astronauts unfurl upgraded solar array to boost space station power</a><time datetime="2026-10-29T21:57:22+00:00" data-sfn-time="date">October 29, 2026</time></div></li><li class="related-item"><a href="https://spaceflightnow.com/2026/10/28/united-launch-alliance-announces-mid-november-return-to-flight-for-vulcan-rocket/" class="art has-photo" style="background-image:url('https://spaceflightnow.com/wp-content/uploads/2026/10/20261028-Vulcan-Leo-1-Fairing-Feature-300x169.jpg')" aria-label="United Launch Alliance announces mid-November return to flight for Vulcan rocket"></a><div><a href="https://spaceflightnow.com/2026/10/28/united-launch-alliance-announces-mid-november-return-to-flight-for-vulcan-rocket/">United Launch Alliance announces mid-November return to flight for Vulcan rocket</a><time datetime="2026-10-28T22:46:41+00:00" data-sfn-time="date">October 28, 2026</time></div></li></ul></section><section class="rail-set rail-set--videos"><h2 class="rail-title">Featured Videos</h2><ul class="video-list"><li class="video-item"><a href="https://www.youtube.com/watch?v=7x582dlbPLo" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/7x582dlbPLo/mqdefault.jpg')" aria-label="SpaceX caught its 1st Starship"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://www.youtube.com/watch?v=7x582dlbPLo" target="_blank" rel="noopener" class="title">SpaceX caught its 1st Starship</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/6zsziM7mGII?si=KvXsKNsl3vildfbT" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/6zsziM7mGII/mqdefault.jpg')" aria-label="Blue Origin, SpaceX race to become 1st to carry NASA astronauts to the Moon"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/6zsziM7mGII?si=KvXsKNsl3vildfbT" target="_blank" rel="noopener" class="title">Blue Origin, SpaceX race to become 1st to carry NASA astronauts to the Moon</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/TkJFZ0epQp8" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/TkJFZ0epQp8/mqdefault.jpg')" aria-label="Artemis Debrief: Interview with NASA&#039;s Amit Kshatriya"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/TkJFZ0epQp8" target="_blank" rel="noopener" class="title">Artemis Debrief: Interview with NASA&#039;s Amit Kshatriya</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/qvWl-fRl1Rw" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/qvWl-fRl1Rw/mqdefault.jpg')" aria-label="4K Replay: SpaceX Falcon 9 lights up Florida dawn sky on Bandwagon-5 launch"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/qvWl-fRl1Rw" target="_blank" rel="noopener" class="title">4K Replay: SpaceX Falcon 9 lights up Florida dawn sky on Bandwagon-5 launch</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/lFPQdi3dvnY" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/lFPQdi3dvnY/mqdefault.jpg')" aria-label="How Blue Origin plans to dramatically increase its New Glenn rocket launch rate"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/lFPQdi3dvnY" target="_blank" rel="noopener" class="title">How Blue Origin plans to dramatically increase its New Glenn rocket launch rate</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/qIAZqrsJGfQ" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/qIAZqrsJGfQ/mqdefault.jpg')" aria-label="4K Replay: Falcon 9 creates a giant “Space Jellyfish” in the sky"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/qIAZqrsJGfQ" target="_blank" rel="noopener" class="title">4K Replay: Falcon 9 creates a giant “Space Jellyfish” in the sky</a><span class="meta">Watch on YouTube</span></div></li><li class="video-item"><a href="https://youtu.be/z4g_QwAh1EQ" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/z4g_QwAh1EQ/mqdefault.jpg')" aria-label="How Blue Origin recovers from launch pad disaster"><span class="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></a><div><a href="https://youtu.be/z4g_QwAh1EQ" target="_blank" rel="noopener" class="title">How Blue Origin recovers from launch pad disaster</a><span class="meta">Watch on YouTube</span></div></li></ul></section><section class="rail-set rail-set--card"><div class="rail-box"><a href="https://www.youtube.com/live/thfYPsRqxmw" target="_blank" rel="noopener" class="art has-photo" style="background-image:url('https://img.youtube.com/vi/thfYPsRqxmw/maxresdefault.jpg')" aria-label="Launch Pad Live — 24/7 views from Cape Canaveral"></a><h4><span class="live-dot"></span><a href="https://www.youtube.com/live/thfYPsRqxmw" target="_blank" rel="noopener">Launch Pad Live — 24/7 views from Cape Canaveral</a></h4></div></section></div>
+      </aside>
+    </div>
+  </main>
+<footer class="site-footer">
+<nav class="footer-nav" aria-label="Footer">
+<div class="footer-nav-inner shell">
+<a href="https://spaceflightnow.com/">Home</a>
+<a href="https://spaceflightnow.com/news-archive/">News Archive</a>
+<a href="https://spaceflightnow.com/launch-schedule/">Launch Schedule</a>
+<a href="https://spaceflightnow.com/mission-reports/">Mission Reports</a>
+<a href="https://spaceflightnow.com/members/" data-footer-members>Become a Member</a>
+<a href="https://spaceflightnow.com/live/">Live</a>
+<a href="https://spaceflightnow.com/about/">About</a>
+<a href="https://spaceflightnow.com/contact/">Contact</a>
+<a href="https://shop.spaceflightnow.com/" target="_blank" rel="noopener">Shop</a>
+<a href="https://spaceflightnow.com/donate/">Donate</a>
+<a href="https://spaceflightnow.com/subscribe/">Subscribe</a>
+<a href="https://spaceflightnow.com/contact/?feedback=1#contact-form" class="beta-feedback-link" rel="nofollow" onclick="this.href=this.href.split('#')[0]+'&amp;from='+encodeURIComponent(location.href)+'#contact-form'">Report a problem</a>
+</div>
+</nav>
+<div class="footer-bottom">
+<div class="footer-bottom-inner shell"><span class="footer-copy">&copy; 1999&ndash;2026 Spaceflight Now Inc<span class="footer-credit">Site by <a href="https://spacecoastchronicles.com/work-with-me" target="_blank" rel="noopener">Space Coast Chronicles</a></span></span><span class="footer-legal"><a href="https://spaceflightnow.com/privacy-policy/">Privacy Policy</a><a href="https://spaceflightnow.com/copyright-notice/">Copyright Notice</a></span></div>
+</div>
+</footer>
+<button class="back-to-top" id="back-to-top" type="button" aria-label="Back to top">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/mh-magazine-child/*","/wp-content/themes/mh-magazine/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script>
+if (window.top !== window.self && document.body.classList.contains('simpay-payment-page')) {
+  window.top.location.href = window.location.href;
+}
+</script>
+<script id="sfn-stats-js-before">
+window.SFN_STATS={"url":"https:\/\/stats.spaceflightnow.com\/e"};
+//# sourceURL=sfn-stats-js-before
+</script>
+<script id="sfn-stats-js" src="https://spaceflightnow.com/new/assets/js/stats.js?ver=1794361576"></script>
+<script id="sfn-tour-js-extra">
+var SFN_TOUR = {"v":"1","auto":"1","mv":"1","mauto":"1","links":{"schedule":"https://spaceflightnow.com/launch-schedule/","tracker":"https://spaceflightnow.com/tracker/","missions":"https://spaceflightnow.com/mission-reports/","live":"https://spaceflightnow.com/live/","archive":"https://spaceflightnow.com/news-archive/","members":"https://spaceflightnow.com/members/","membersContent":"https://spaceflightnow.com/members-content/","theater":"https://spaceflightnow.com/members/theater/"}};
+//# sourceURL=sfn-tour-js-extra
+</script>
+<script id="sfn-tour-js" src="https://spaceflightnow.com/new/assets/js/sfn-tour.js?ver=1793771924"></script>
+<script id="sfn-menu-js" src="https://spaceflightnow.com/new/assets/js/menu.js?ver=1793127046"></script>
+<script id="sfn-settings-js" src="https://spaceflightnow.com/new/assets/js/settings.js?ver=1793717812"></script>
+<script id="sfn-memberful-auth-js-before">
+window.SFN_PAGES_BASE="https:\/\/spaceflightnow.com\/new\/pages\/";window.SFN_API_BASE="https:\/\/spaceflightnow.com\/wp-json\/sfn\/v1";window.SFN_URLS={"home":"https:\/\/spaceflightnow.com\/","news-archive":"https:\/\/spaceflightnow.com\/news-archive\/","launch-schedule":"https:\/\/spaceflightnow.com\/launch-schedule\/","mission-reports":"https:\/\/spaceflightnow.com\/mission-reports\/","members":"https:\/\/spaceflightnow.com\/members\/","members-content":"https:\/\/spaceflightnow.com\/members-content\/","live-blog":"https:\/\/spaceflightnow.com\/live\/","tracker":"https:\/\/spaceflightnow.com\/tracker\/","about":"https:\/\/spaceflightnow.com\/about\/","contact":"https:\/\/spaceflightnow.com\/contact\/","donate":"https:\/\/spaceflightnow.com\/donate\/","subscribe":"https:\/\/spaceflightnow.com\/subscribe\/","theater":"https:\/\/spaceflightnow.com\/members\/theater\/"};
+//# sourceURL=sfn-memberful-auth-js-before
+</script>
+<script id="sfn-memberful-auth-js" src="https://spaceflightnow.com/new/assets/js/memberful-auth.js?ver=1793742283"></script>
+<script id="sfn-yt-signin-js" src="https://spaceflightnow.com/new/assets/js/yt-signin.js?ver=1793742283"></script>
+<script id="sfn-nav-js" src="https://spaceflightnow.com/new/assets/js/nav.js?ver=1793763290"></script>
+<script id="sfn-next-pick-js" src="https://spaceflightnow.com/new/assets/js/next-pick.js?ver=1793758643"></script>
+<script id="sfn-next-launch-js-before">
+window.SFN_LAUNCH_FILES={"upcoming":"\/wp-content\/uploads\/sfn-launch\/upcoming.json","completed":"\/wp-content\/uploads\/sfn-launch\/completed.json","history":"\/wp-content\/uploads\/sfn-launch\/history.json"};
+//# sourceURL=sfn-next-launch-js-before
+</script>
+<script id="sfn-next-launch-js" src="https://spaceflightnow.com/new/assets/js/next-launch.js?ver=1793758643"></script>
+<script id="sfn-search-core-js-before">
+window.SFN_SEARCH_SYNONYMS=[["iss","international space station"],["eva","spacewalk","space walk"],["ift","integrated flight test","flight"],["jwst","james webb space telescope","webb telescope","webb space telescope"],["hst","hubble space telescope"],["sls","space launch system"],["ula","united launch alliance"],["ksc","kennedy space center"],["ccsfs","cape canaveral space force station","cape canaveral"],["vsfb","vandenberg space force base","vandenberg"],["lc 39 a","launch complex 39 a","pad 39 a"],["slc 40","space launch complex 40"],["msr","mars sample return"],["cst 100","starliner"],["cft","crew flight test"],["oft","orbital flight test"],["oa","ng"],["f 9","falcon 9"],["fh","falcon heavy"],["rud","rapid unscheduled disassembly"],["esa","european space agency"],["jaxa","japan aerospace exploration agency"],["isro","indian space research organisation","indian space research organization"],["cnsa","china national space administration"],["nro","national reconnaissance office"],["ussf","space force"],["faa","federal aviation administration"],["tiangong","chinese space station","china space station"],["kuiper","amazon leo","project kuiper"],["starbase","boca chica"],["moon","lunar"],["suni","sunita"],["dart","double asteroid redirection test"],["cz","long march"],["chang e","change"],["rtls","return to launch site"],["v 3","version 3"],["v 2","version 2"],["ax","axiom mission"],["sda","space development agency"],["hls","human landing system"],["crs","commercial resupply services"],["gto","geosynchronous transfer orbit"],["dsn","deep space network"],["eus","exploration upper stage"]];
+//# sourceURL=sfn-search-core-js-before
+</script>
+<script id="sfn-search-core-js" src="https://spaceflightnow.com/new/assets/js/search-core.js?ver=1793717812"></script>
+<script id="sfn-launch-app-js-before">
+window.SFN_API_BASE="https:\/\/spaceflightnow.com\/wp-json\/sfn\/v1";window.SFN_LOGO_BASE="https:\/\/spaceflightnow.com\/new\/assets\/logos\/";window.SFN_WP_BASE="https:\/\/spaceflightnow.com\/wp-json\/wp\/v2";
+window.SFN_WEATHER_FILE="\/wp-content\/uploads\/sfn-weather\/weather.json";window.SFN_WEATHER_COMPLETED_FILE="\/wp-content\/uploads\/sfn-weather\/completed.json";
+//# sourceURL=sfn-launch-app-js-before
+</script>
+<script id="sfn-launch-app-js" src="https://spaceflightnow.com/new/assets/js/launch-app.js?ver=1794766922"></script>
+<script id="sfn-masthead-search-js" src="https://spaceflightnow.com/new/assets/js/masthead-search.js?ver=1793127046"></script>
+<script id="sfn-webapp-nav-js" src="https://spaceflightnow.com/new/assets/js/webapp-nav.js?ver=1795045527"></script>
+<script id="sfn-local-time-js" src="https://spaceflightnow.com/new/assets/js/local-time.js?ver=1793717812"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://spaceflightnow.com/wp-includes/js/wp-emoji-release.min.js?ver=7.1.5"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=https://spaceflightnow.com/wp-includes/js/wp-emoji-loader.min.js
+</script>
+</body>
+</html>

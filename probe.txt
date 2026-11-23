@@ -1,0 +1,31 @@
+== ll2_api: 200 28166 chars, 3 hits
+   con 9 Block 5 | Cygnus CRS-2 NG-25","response_mode":"list","slug":"falcon-9-block-5-cygnus-crs-2-ng-25","launch_designator":null,"status":{"id":1,"name":"Go for Launch","abbrev":"Go","description":"Current T-0 confirmed by official or reliable sources."},"last_updated":"2026-11-20T17:43:33Z","net":"2026-11-29T15:50:00Z","net_precision":{"id":1,"name":"Minute","abbrev":"MIN","description":"The T-0 
+   :1,"name":"Go for Launch","abbrev":"Go","description":"Current T-0 confirmed by official or reliable sources."},"last_updated":"2026-11-20T17:43:33Z","net":"2026-11-29T15:50:00Z","net_precision":{"id":1,"name":"Minute","abbrev":"MIN","description":"The T-0 is accurate to the minute."},"window_end":"2026-11-29T15:50:00Z","window_start":"2026-11-29T15:50:00Z","image":{"id":1736,"name":"Falcon 9 lift
+   ","description":"Current T-0 confirmed by official or reliable sources."},"last_updated":"2026-11-20T17:43:33Z","net":"2026-11-29T15:50:00Z","net_precision":{"id":1,"name":"Minute","abbrev":"MIN","description":"The T-0 is accurate to the minute."},"window_end":"2026-11-29T15:50:00Z","window_start":"2026-11-29T15:50:00Z","image":{"id":1736,"name":"Falcon 9 liftoff from LC-39A","image_url":"https://
+== rocketlaunch_live_api: 200 6896 chars, 0 hits
+== rocketlaunch_live: 200 324346 chars, 4 hits
+   con-9 company-spacex location-cape-canaveral-sfs location-united-states location-florida pad-slc-40 filtered_launch"> NOV 29 03:50 PM 
+   -canaveral-sfs location-united-states location-florida pad-slc-40 filtered_launch"> NOV 29 03:50 PM 
+   r large-2 medium-2 small-3 columns"> NOV 29 03:50 PM <div class="launch_weather rlt_weather" data-condition="Overcast" data-temp-f="58" data-wind-mph="3" data-updated="11/21/26, 10:00 AM" data-launch-time="20
+   29 03:50 PM 58° <div class="large-7 medium-6 large-push-3 medium-push-4 small-9 column
+== nextspaceflight: 200 173629 chars, 3 hits
+   /media.nextspaceflight.com/media/rockets-thumb/CZ-6A_SatNet_LEO_Group_05.webp\",\"pad_location_name\":\"Taiyuan Satellite Launch Center, China\",\"pad_name\":\"LC-9A\",\"vid_url\":\"\",\"short_recoveries\":[]},{\"id\":8469,\"name\":\"Unknown Payload\",\"lsp_name\":\"CASC\",\"status_id\":2,\"net\":\"2026-11-29T03:50:00Z\",\"net_precision\":\"Month\",\"rocket_config_name\":\"Long March 6C\",\"rocket
+   bnail\":\"https://media.nextspaceflight.com/media/rockets-thumb/Long_March_6C.webp\",\"pad_location_name\":\"Taiyuan Satellite Launch Center, China\",\"pad_name\":\"LC-9A\",\"vid_url\":\"\",\"short_recoveries\":[]},{\"id\":8336,\"name\":\"USSF-380\",\"lsp_name\":\"SpaceX\",\"status_id\":2,\"net\":\"2026-11-29T04:39:00Z\",\"net_precision\":\"Year\",\"rocket_config_name\":\"Falcon 9 Block 5\",\"rock
+   :\"https://www.spacex.com/launches/ussf380\",\"short_recoveries\":[{\"landing_status\":\"Upcoming\",\"recovery_status\":\"Same\",\"landing_zone\":{\"name\":\"OCISLY\",\"icon\":\"SPX_ASDS\",\"custom_icon\":true}}]},{\"id\":7076,\"name\":\"CRS NG-25\",\"lsp_name\":\"SpaceX\",\"status_id\":2,\"net\":\"2026-11-29T15:50:00Z\",\"net_precision\":\"Month\",\"rocket_config_name\":\"Falcon 9 Block 5\",\"roc
+== spacelaunchnow: 200 57087 chars, 2 hits
+    Falcon 9 Block 5 | Cygnus CRS-2 NG-25 SpaceX | United States of America Cape Canaveral SFS, FL, USA November 29, 2026 - 15:50 UTC Status: Go for Launch 
+   ard-title">Falcon 9 Block 5 | Cygnus CRS-2 NG-25 SpaceX | United States of America Cape Canaveral SFS, FL, USA November 29, 2026 - 15:50 UTC Status: Go for Launch Mission: 
+== spaceflightnow: 200 69510 chars, 0 hits
+== rocketlaunch_org: 200 146333 chars, 20 hits
+    href="/launch-providers/china-aerospace-science-and-technology-corporation">CASC 29 Nov, 3:50am UTC <div class="px-2 py-1 sm:px-4 sm:py-2 text-foregr
+   round/90 text-xs sm:text-sm rounded-lg font-medium bg-[#1E2439]">🎯 Unknown Details TBD. Last Update: Delayed to November 29 per new NOTAMs. <a href="/mission-falcon-9-block-5-ussf-380"
+   ium text-foreground/95 hover:underline"> SpaceX 29 Nov, 4:39am UTC <div class="px-2 py-1 sm:px-4 sm:py-2 text-foregr
+   classified LEO satellites based on SpaceX’s Starshield satellite bus, based on locations of rocket stage drop zones being exact fits with previous Starlink Group 15 launches. Last Update: Now targeting Nov 29 at 04:39 UTC <a href="/mission-falcon-9-block-5-cygnus-crs-2
+== floridatoday: FAILED HTTP 404 for https://www.floridatoday.com/launches/
+== spacecoastlaunches: FAILED HTTP 404 for https://www.spacecoastlaunches.com/launch-list.php
+== ksc_visitor: 200 672438 chars, 4 hits
+   ,5.8h13.4l-.8-5.8,3.1-1.5h1.5,0Z\&quot;/&gt;\r\n&lt;/svg&gt;&quot;],&quot;predefined_icon&quot;:[0,&quot;launch&quot;]}],&quot;prefix&quot;:[0,&quot;Rocket Launch&quot;],&quot;title&quot;:[0,&quot;NASA&#39;s SpaceX Falcon 9 CRS NG-25&quot;],&quot;suffix&quot;:[0,null],&quot;dates&quot;:[1,[[0,&quot;2026-11-29T10:47:00-05:00&quot;]]],&quot;image&quot;:[0,{&quot;id&quot;:[0,&quot;THUMB_SpX_CRS_SLC40
+   uot;auto&quot;],&quot;is_portrait&quot;:[0,true]}],&quot;url&quot;:[0,&quot;/event/nasas-spacex-falcon-9-crs-ng-25/&quot;],&quot;date_net&quot;:[0,true],&quot;date_tbd&quot;:[0,false],&quot;date_net_hide_date&quot;:[0,false],&quot;date_description&quot;:[0,&quot;&quot;],&quot;sort_by&quot;:[0,&quot;2026-11-29T10:47:00-05:00&quot;]}]]]}]}" ssr="" client="load" opts="{&quot;name&quot;:&quot;EventsSc
+   ." loading="lazy"> Rocket Launch NASA&#39;s SpaceX Falcon 9 CRS NG-25 NET Nov 29, 2026 </astro-i
+   ;prefix&quot;:[0,&quot;Astronaut Appearance&quot;],&quot;title&quot;:[0,&quot;Meet Astronaut Tony Antonelli&quot;],&quot;suffix&quot;:[0,null],&quot;dates&quot;:[1,[[0,&quot;2026-11-25T17:00:00-05:00&quot;],[0,&quot;2026-11-27T17:00:00-05:00&quot;],[0,&quot;2026-11-28T17:00:00-05:00&quot;],[0,&quot;2026-11-29T17:00:00-05:00&quot;],[0,&quot;2026-11-30T17:00:00-05:00&quot;]]],&quot;image&quot;:[0,{&
+== spacelaunchschedule: FAILED HTTP 404 for https://www.spacelaunchschedule.com/category/florida/
