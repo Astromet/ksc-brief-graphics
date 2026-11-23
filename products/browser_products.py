@@ -17,8 +17,9 @@ KSCVC_CAL = ("https://www.kennedyspacecenter.com/launches-and-events/events-cale
 
 def ksc_launches(browser):
     """Scheduled rocket launches from the official Kennedy Space Center Visitor Complex
-    events calendar: [{"name", "time" (ISO, with offset)}]. Launches whose date is TBD,
-    NET, or shown without a time are left out (no official T-0)."""
+    events calendar: [{"name", "time" (ISO, with offset)}]. NET ("no earlier than") launches
+    are included at their listed time; launches whose date is TBD or shown without a time
+    are left out."""
     page = browser.new_page()
     try:
         page.goto(KSCVC_CAL, wait_until="domcontentloaded", timeout=90000)
@@ -34,7 +35,7 @@ def ksc_launches(browser):
         if "launch" not in (key + " " + label).lower():
             continue
         flag = lambda k: re.search(rf'"{k}":true', body) is not None  # noqa: E731
-        if flag("date_tbd") or flag("date_net") or flag("hide_time"):
+        if flag("date_tbd") or flag("hide_time"):
             continue
         title = re.search(r'"title":"([^"]*)"', body)
         dates = re.search(r'"dates":\[([^\]]*)\]', body)
