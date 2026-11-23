@@ -2,6 +2,7 @@
 sounding-climatology chart + data readout."""
 import base64
 import io
+import html as html_lib
 import json
 import re
 
@@ -37,12 +38,14 @@ def ksc_launches(browser):
         flag = lambda k: re.search(rf'"{k}":true', body) is not None  # noqa: E731
         if flag("date_tbd") or flag("hide_time"):
             continue
-        title = re.search(r'"title":"([^"]*)"', body)
+        # the event-type heading ("Rocket Launch") can also appear as a title; use the mission's
+        titles = [json.loads(f'"{t}"') for t in re.findall(r'"title":"((?:[^"\\]|\\.)*)"', body)]
+        titles = [t for t in titles if t.strip() and t.strip().lower() not in ("rocket launch", label.lower())]
         dates = re.search(r'"dates":\[([^\]]*)\]', body)
-        if not title or not dates:
+        if not titles or not dates:
             continue
         for d in re.findall(r'"([0-9]{4}-[0-9]{2}-[0-9]{2}T[^"]+)"', dates.group(1)):
-            found.append({"name": json.loads(f'"{title.group(1)}"'), "time": d})
+            found.append({"name": html_lib.unescape(titles[0]), "time": d})
     if not seen:
         raise RuntimeError("calendar page had no events (blocked or changed?)")
     uniq = {(f["name"], f["time"]): f for f in found}
