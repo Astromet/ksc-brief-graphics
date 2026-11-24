@@ -302,8 +302,7 @@ def _read(name, url, seen, now):
                     r["mm"], r["row"], _ = read_routine(im)
                 except Exception:  # noqa: BLE001
                     pass
-            if r["t"] is None and prev.get("hash") != h or (r["t"] is None and now - first < dt.timedelta(hours=8)):
-                # undated but newly posted image: count it as launched when we first saw it
+            if r["t"] is None:  # time unreadable: date it by when this exact image first appeared
                 r["t"] = first
     except Exception as e:  # noqa: BLE001
         r["err"] = e
