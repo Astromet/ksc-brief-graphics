@@ -294,8 +294,17 @@ def _read(name, url, seen, now):
             if hhmm:
                 r["t"] = r["t"].replace(minute=int(hhmm[2:]))
         else:
-            r["mm"], r["row"] = read_pw_mm(im)
-            r["t"] = obs_time(r["row"].split()[0], now)
+            try:
+                r["mm"], r["row"] = read_pw_mm(im)
+                r["t"] = obs_time(r["row"].split()[0], now)
+            except Exception:  # noqa: BLE001  (layout differs; fall back to the routine reader)
+                try:
+                    r["mm"], r["row"], _ = read_routine(im)
+                except Exception:  # noqa: BLE001
+                    pass
+            if r["t"] is None and prev.get("hash") != h or (r["t"] is None and now - first < dt.timedelta(hours=8)):
+                # undated but newly posted image: count it as launched when we first saw it
+                r["t"] = first
     except Exception as e:  # noqa: BLE001
         r["err"] = e
     return r
