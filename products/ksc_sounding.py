@@ -274,7 +274,8 @@ def _read(name, url, seen, now):
     machine-readable date, so their launch time is the nominal (or title) hour on or
     before the time we first saw that exact image (tracked by hash in `seen`)."""
     import hashlib
-    resp = get(url)
+    # cache-bust: weather.gov's CDN otherwise can hand back the previous plot for a while
+    resp = get(f"{url}?t={int(now.timestamp())}")
     im = Image.open(io.BytesIO(resp.content))
     im.seek(0)
     im = im.convert("RGB")
