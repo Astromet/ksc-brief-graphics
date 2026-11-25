@@ -31,7 +31,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           TZ: America/New_York
-          URL: https://www.weather.gov/images/smg/SNDG9AM.GIF
+          # all three SMG KXMR plots: AM synoptic, afternoon, mission support (the morning
+          # balloon sometimes posts only to the mission-support page)
+          URLS: https://www.weather.gov/images/smg/SNDG9AM.GIF https://www.weather.gov/images/smg/SNDG21PM.GIF https://www.weather.gov/images/smg/KSCSNDG.GIF
           NHC: https://www.nhc.noaa.gov/xgtwo/two_atl_7d0.png
           UA: "KSC-brief-graphics (github.com/Astromet/ksc-brief-graphics)"
         run: |
@@ -54,7 +56,7 @@ jobs:
           done
           # SMG rewrites its GIFs every few minutes (Last-Modified churns), so watch the image
           # itself: a new hash means a new sounding was posted
-          imghash() { curl -fsS -A "$UA" "$URL?t=$(date +%s)" | sha1sum | cut -c1-16; }
+          imghash() { for u in $URLS; do (set -o pipefail; curl -fsS -A "$UA" "$u?t=$(date +%s)" | sha1sum | cut -c1-8) || echo fail; done | tr '\n' ' '; }
           last=$(imghash || true)
           nlast=$(curl -fsS "https://astromet.github.io/ksc-brief-graphics/nhc_meta.json?t=$(date +%s)" | jq -r '.source_modified // empty' || true)
           echo "sounding image now: ${last:-unknown}; published NHC outlook: ${nlast:-unknown}"
@@ -69,7 +71,8 @@ jobs:
             lm=$(imghash || true)
             nm=$(curl -fsSI -A "$UA" "$NHC" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}' || true)
             new=""
-            if [ -n "$lm" ] && [ "$lm" != "$last" ]; then new="sounding image (posted by $(date +%H:%M) ET)"; last="$lm"; fi
+            if grep -q fail <<<"$last" && ! grep -q fail <<<"$lm"; then last="$lm"; fi
+            if [ -n "$lm" ] && [ "$lm" != "$last" ] && ! grep -q fail <<<"$lm$last"; then new="sounding image (posted by $(date +%H:%M) ET)"; last="$lm"; fi
             if [ -n "$nm" ] && [ "$nm" != "$nlast" ]; then new="$new NHC outlook ($nm)"; nlast="$nm"; fi
             if [ -n "$new" ]; then
               # a queued run (full refresh or an earlier rebuild) will fetch the new data when it

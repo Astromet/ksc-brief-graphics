@@ -296,7 +296,13 @@ def _read(name, url, seen, now):
         else:
             try:
                 r["mm"], r["row"] = read_pw_mm(im)
-                r["t"] = obs_time(r["row"].split()[0], now)
+                toks = r["row"].split()
+                gmt = toks[0]  # DDHHMM; a narrow '1' can split it into pieces ('251 1 15')
+                for tk in toks[1:]:
+                    if len(gmt) >= 6 or not tk.isdigit() or len(gmt) + len(tk) > 6:
+                        break
+                    gmt += tk
+                r["t"] = obs_time(gmt, now)
             except Exception:  # noqa: BLE001  (layout differs; fall back to the routine reader)
                 try:
                     r["mm"], r["row"], _ = read_routine(im)
