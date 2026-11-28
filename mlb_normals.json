@@ -1,0 +1,18 @@
+{
+ "for": "today",
+ "normal_hi": 76,
+ "normal_lo": 58,
+ "issued": "226 AM EST SAT NOV 28 2026",
+ "rec_hi": 88,
+ "rec_hi_years": [
+  "1948",
+  "1976"
+ ],
+ "rec_lo": 35,
+ "rec_lo_years": [
+  "1938"
+ ],
+ "sunrise": "6:55 AM EST",
+ "sunset": "5:26 PM EST",
+ "updated": "2026-11-28 17:51Z"
+}

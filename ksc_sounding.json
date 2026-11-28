@@ -1,0 +1,24 @@
+{
+ "updated": "2026-11-28 17:51Z",
+ "source": "Early AM synoptic",
+ "url": "https://www.weather.gov/images/smg/SNDG9AM.GIF",
+ "source_modified": "Sat, 28 Nov 2026 17:50:23 GMT",
+ "seen": {
+  "Early AM synoptic": {
+   "hash": "ed0928506996b4c2",
+   "first_seen": "2026-11-28T13:43Z"
+  },
+  "Afternoon": {
+   "hash": "a361314b141c96f0",
+   "first_seen": "2026-11-28T02:36Z"
+  },
+  "Mission support": {
+   "hash": "d3b761dca0172ac0",
+   "first_seen": "2026-11-28T12:56Z"
+  }
+ },
+ "pw_mm": 23,
+ "pw_in": 0.91,
+ "row": "-0.5 15.2 101.9 25.8 ---- 23.8 308.0 ---- 6.9 22.9 ---- -161",
+ "obs_time": "2026-11-28T12:00Z"
+}
